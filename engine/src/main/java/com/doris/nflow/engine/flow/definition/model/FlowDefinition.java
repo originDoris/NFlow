@@ -1,9 +1,18 @@
 package com.doris.nflow.engine.flow.definition.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.doris.nflow.engine.common.model.BaseModel;
 import com.doris.nflow.engine.common.model.node.BaseNode;
+import com.doris.nflow.engine.flow.definition.enumerate.FlowDefinitionStatus;
+import com.doris.nflow.engine.flow.definition.handler.BaseNodeHandler;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -13,6 +22,7 @@ import java.util.List;
  * @date: 2022/9/29 13:51
  */
 @Data
+@TableName("flow_definition")
 public class FlowDefinition extends BaseModel {
 
     /**
@@ -31,8 +41,9 @@ public class FlowDefinition extends BaseModel {
     private String caller;
 
     /**
-     * 是否归档 true 已删除 false 已删除
+     * 是否归档 true 0 未删除 false 1 已删除
      */
+    @TableLogic
     private Boolean archive;
 
     /**
@@ -43,11 +54,14 @@ public class FlowDefinition extends BaseModel {
     /**
      * 流程名称
      */
+    @NotBlank(message = "流程名称不能为空！")
     private String flowName;
 
     /**
      * 流程模型列表
      */
+    @TableField(typeHandler = BaseNodeHandler.class)
+    @NotEmpty(message = "流程定义模块不能为空！")
     private List<BaseNode> flowModule;
 
     /**
@@ -59,7 +73,8 @@ public class FlowDefinition extends BaseModel {
      * 流程状态
      * {@link com.doris.nflow.engine.flow.definition.enumerate.FlowDefinitionStatus}
      */
-    private String status;
+    @NotNull(message = "流程状态不能为空！")
+    private FlowDefinitionStatus status;
 
 
 

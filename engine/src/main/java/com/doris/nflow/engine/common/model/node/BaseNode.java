@@ -14,6 +14,9 @@ import java.util.Map;
  */
 @Data
 public class BaseNode implements Serializable {
+
+    public static final String NODE_TYPE = "type";
+
     /**
      * 节点唯一代码
      */
