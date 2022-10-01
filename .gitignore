@@ -3,3 +3,5 @@
 NFlow.iml
 /engine/target/
 /api/api.iml
+/engine/target
+/api/target

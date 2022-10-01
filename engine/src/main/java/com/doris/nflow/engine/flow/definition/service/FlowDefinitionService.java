@@ -1,5 +1,6 @@
 package com.doris.nflow.engine.flow.definition.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
 import org.springframework.validation.annotation.Validated;
@@ -58,6 +59,8 @@ public interface FlowDefinitionService{
      */
     List<FlowDefinition> queryList(@NotNull(message = "查询参数不能为空！") FlowDefinitionQuery flowDefinitionQuery);
 
+
+    IPage<FlowDefinition> queryPage(@NotNull(message = "查询参数不能为空！") FlowDefinitionQuery flowDefinitionQuery);
 
 
 }

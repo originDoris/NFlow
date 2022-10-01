@@ -25,6 +25,8 @@ import java.util.List;
 @TableName("flow_definition")
 public class FlowDefinition extends BaseModel {
 
+    public static final String FLOW_MODULE_CODE = "flow_module_code";
+
     /**
      * 租户名称
      */
@@ -67,6 +69,7 @@ public class FlowDefinition extends BaseModel {
     /**
      * 流程模型代码
      */
+    @NotBlank(message = "流程模块代码不能为空！")
     private String flowModuleCode;
 
     /**

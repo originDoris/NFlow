@@ -23,6 +23,11 @@ public class BaseNode implements Serializable {
     private String code;
 
     /**
+     * 节点名称
+     */
+    private String name;
+
+    /**
      * 节点类型
      */
     private String type;

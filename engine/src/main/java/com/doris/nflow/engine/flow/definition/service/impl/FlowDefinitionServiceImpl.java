@@ -1,5 +1,8 @@
 package com.doris.nflow.engine.flow.definition.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doris.nflow.engine.flow.definition.mapper.FlowDefinitionMapper;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
@@ -24,8 +27,6 @@ import java.util.Optional;
 @Slf4j
 public class FlowDefinitionServiceImpl implements FlowDefinitionService {
 
-
-    public static final IdGenerator idGenerator = new StrongUuidGenerator();
     private final FlowDefinitionMapper flowDefinitionMapper;
 
     public FlowDefinitionServiceImpl(FlowDefinitionMapper flowDefinitionMapper) {
@@ -34,26 +35,41 @@ public class FlowDefinitionServiceImpl implements FlowDefinitionService {
 
     @Override
     public boolean save(FlowDefinition flowDefinition) {
-        return false;
+        return flowDefinitionMapper.insert(flowDefinition) > 0;
     }
 
     @Override
     public boolean modify(FlowDefinition flowDefinition) {
-        return false;
+        QueryWrapper<FlowDefinition> wrapper = new QueryWrapper<FlowDefinition>();
+        wrapper.eq(FlowDefinition.FLOW_MODULE_CODE, flowDefinition.getFlowModuleCode());
+        return flowDefinitionMapper.update(flowDefinition, wrapper) > 0;
     }
 
     @Override
     public boolean remove(String flowModuleCode) {
-        return false;
+        QueryWrapper<FlowDefinition> wrapper = new QueryWrapper<FlowDefinition>();
+        wrapper.eq(FlowDefinition.FLOW_MODULE_CODE, flowModuleCode);
+        return flowDefinitionMapper.delete(wrapper) > 0;
     }
 
     @Override
     public Optional<FlowDefinition> detail(String flowModuleCode) {
-        return Optional.empty();
+        QueryWrapper<FlowDefinition> wrapper = new QueryWrapper<FlowDefinition>();
+        wrapper.eq(FlowDefinition.FLOW_MODULE_CODE, flowModuleCode);
+        FlowDefinition flowDefinition = flowDefinitionMapper.selectOne(wrapper);
+        return Optional.ofNullable(flowDefinition);
     }
 
     @Override
     public List<FlowDefinition> queryList(FlowDefinitionQuery flowDefinitionQuery) {
-        return null;
+        Page<FlowDefinition> page = new Page<>(0, -1);
+        IPage<FlowDefinition> data = flowDefinitionMapper.queryList(page, flowDefinitionQuery);
+        return data.getRecords();
+    }
+
+    @Override
+    public IPage<FlowDefinition> queryPage(FlowDefinitionQuery flowDefinitionQuery) {
+        Page<FlowDefinition> page = new Page<>(flowDefinitionQuery.getPageNo(), flowDefinitionQuery.getPageSize());
+        return flowDefinitionMapper.queryList(page, flowDefinitionQuery);
     }
 }

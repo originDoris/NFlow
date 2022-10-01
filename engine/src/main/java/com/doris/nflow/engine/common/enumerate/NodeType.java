@@ -1,5 +1,6 @@
 package com.doris.nflow.engine.common.enumerate;
 
+import com.doris.nflow.engine.common.constant.NodeTypeConstant;
 import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.common.model.node.event.EndEvent;
 import com.doris.nflow.engine.common.model.node.event.StartEvent;
@@ -22,13 +23,13 @@ public enum NodeType {
     /**
      * 节点类型
      */
-    START_EVENT_NODE("start", "开始节点", StartEvent.class),
-    END_EVENT_NODE("end", "结束节点", EndEvent.class),
-    USER_TASK_NODE("user", "用户节点", UserTask.class),
-    SERVICE_TASK_NODE("service", "服务节点", ServiceTask.class),
-    SCRIPT_TASK_NODE("script", "脚本节点", ScriptTask.class),
-    EXCLUSIVE_GATEWAY_NODE("exclusiveGateway", "单一网关/排他网关", ExclusiveGateway.class),
-    SEQUENCE_FLOW_NODE("sequence", "顺序流", SequenceFlow.class),
+    START_EVENT_NODE(NodeTypeConstant.START_EVENT_NODE, "开始节点", StartEvent.class),
+    END_EVENT_NODE(NodeTypeConstant.END_EVENT_NODE, "结束节点", EndEvent.class),
+    USER_TASK_NODE(NodeTypeConstant.USER_TASK_NODE, "用户节点", UserTask.class),
+    SERVICE_TASK_NODE(NodeTypeConstant.SERVICE_TASK_NODE, "服务节点", ServiceTask.class),
+    SCRIPT_TASK_NODE(NodeTypeConstant.SCRIPT_TASK_NODE, "脚本节点", ScriptTask.class),
+    EXCLUSIVE_GATEWAY_NODE(NodeTypeConstant.EXCLUSIVE_GATEWAY_NODE, "单一网关/排他网关", ExclusiveGateway.class),
+    SEQUENCE_FLOW_NODE(NodeTypeConstant.SEQUENCE_FLOW_NODE, "顺序流", SequenceFlow.class),
     ;
 
     private String code;
