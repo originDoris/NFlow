@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.doris.nflow.engine.node.instance.mapper.NodeInstanceDataMapper">
+    <resultMap id="BaseResultMap" type="com.doris.nflow.engine.node.instance.model.NodeInstanceData">
+        <result column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+        <result column="operator" property="operator"/>
+        <result column="tenant" property="tenant"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="caller" property="caller"/>
+        <result column="archive" property="archive"/>
+        <result column="remark" property="remark"/>
+        <result column="node_instance_code" property="nodeInstanceCode"/>
+        <result column="instance_data_code" property="instanceDataCode"/>
+        <result column="node_code" property="nodeCode"/>
+        <result column="flow_instance_code" property="flowInstanceCode"/>
+        <result column="flow_deploy_code" property="flowDeployCode"/>
+        <result column="type" property="type"/>
+    </resultMap>
+    <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceDataQuery">
+        select * from node_instance
+        where archive = 0
+        <if test='search != null and search != ""'>
+            and (remark like concat('%',#{search},'%'))
+        </if>
+        <if test='type != null and type != ""'>
+            and type = #{type}
+        </if>
+        <if test='nodeInstanceCode != null and nodeInstanceCode != ""'>
+            and node_instance_code = #{nodeInstanceCode}
+        </if>
+        <if test='nodeCode != null and nodeCode != ""'>
+            and node_code = #{nodeCode}
+        </if>
+        <if test='flowDeployCode != null and flowDeployCode != ""'>
+            and flow_deploy_code = #{flowDeployCode}
+        </if>
+        <if test='flowInstanceCode != null and flowInstanceCode != ""'>
+            and flow_instance_code = #{flowInstanceCode}
+        </if>
+        <if test='instanceDataCode != null and instanceDataCode != ""'>
+            and instance_data_code = #{instanceDataCode}
+        </if>
+    </select>
+
+
+</mapper>

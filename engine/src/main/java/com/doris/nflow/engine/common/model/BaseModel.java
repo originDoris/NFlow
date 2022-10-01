@@ -1,9 +1,6 @@
 package com.doris.nflow.engine.common.model;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -41,6 +38,34 @@ public class BaseModel implements Serializable {
      * 操作人
      */
     protected String operator;
+    /**
+     * 调用方
+     */
+    protected String caller;
+
+    /**
+     * 是否归档 true 0 未删除 false 1 已删除
+     */
+    @TableLogic
+    protected Boolean archive;
+
+    /**
+     * 备注
+     */
+    protected String remark;
+
+
+    /**
+     * 租户名称
+     */
+    protected String tenant;
+
+    /**
+     * 租户代码
+     */
+    protected String tenantCode;
+
+
 
 
 }

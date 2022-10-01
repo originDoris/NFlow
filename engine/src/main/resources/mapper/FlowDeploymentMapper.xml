@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.doris.nflow.engine.flow.definition.mapper.FlowDefinitionMapper">
-    <resultMap id="BaseResultMap" type="com.doris.nflow.engine.flow.definition.model.FlowDefinition">
+<mapper namespace="com.doris.nflow.engine.flow.deployment.mapper.FlowDeploymentMapper">
+    <resultMap id="BaseResultMap" type="com.doris.nflow.engine.flow.deployment.model.FlowDeployment">
         <result column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
@@ -14,14 +14,21 @@
         <result column="flow_name" property="flowName"/>
         <result column="flow_module_code" property="flowModuleCode"/>
         <result column="status" property="status"/>
-        <result column="flow_module" property="flowModule" typeHandler="com.doris.nflow.engine.flow.definition.handler.BaseNodeHandler"/>
+        <result column="flow_deploy_code" property="flowDeployCode"/>
+        <result column="flow_module" property="flowModule" typeHandler="com.doris.nflow.engine.common.handler.BaseNodeHandler"/>
     </resultMap>
-    <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery">
-        select * from flow_definition
+    <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.flow.deployment.model.FlowDeploymentQuery">
+        select * from flow_deployment
         where archive = 0
         <if test='search != null and search != ""'>
             and (remark like concat('%',#{search},'%')
                 or flow_name like concat('%',#{search},'%'))
+        </if>
+        <if test='status != null and status != ""'>
+            and status = #{status}
+        </if>
+        <if test='flowModuleCode != null and flowModuleCode != ""'>
+            and flow_module_code = #{flowModuleCode}
         </if>
     </select>
 

@@ -3,12 +3,13 @@ package com.doris.nflow.engine.flow.definition.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.doris.nflow.engine.common.enumerate.ErrorCode;
+import com.doris.nflow.engine.common.exception.ParamException;
+import com.doris.nflow.engine.flow.definition.enumerate.FlowDefinitionStatus;
 import com.doris.nflow.engine.flow.definition.mapper.FlowDefinitionMapper;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
 import com.doris.nflow.engine.flow.definition.service.FlowDefinitionService;
-import com.doris.nflow.engine.util.IdGenerator;
-import com.doris.nflow.engine.util.StrongUuidGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,5 +72,17 @@ public class FlowDefinitionServiceImpl implements FlowDefinitionService {
     public IPage<FlowDefinition> queryPage(FlowDefinitionQuery flowDefinitionQuery) {
         Page<FlowDefinition> page = new Page<>(flowDefinitionQuery.getPageNo(), flowDefinitionQuery.getPageSize());
         return flowDefinitionMapper.queryList(page, flowDefinitionQuery);
+    }
+
+
+    @Override
+    public boolean modifyStatus(FlowDefinitionStatus status, String flowModuleCode) throws ParamException {
+        Optional<FlowDefinition> detail = detail(flowModuleCode);
+        if (detail.isEmpty()) {
+            throw new ParamException(ErrorCode.PARAM_INVALID,"未查询到流程定义信息，请确认！");
+        }
+        FlowDefinition flowDefinition = detail.get();
+        flowDefinition.setStatus(status.getCode());
+        return modify(flowDefinition);
     }
 }

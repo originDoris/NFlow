@@ -11,4 +11,6 @@ import lombok.Data;
  */
 @Data
 public class FlowDefinitionQuery extends BaseQuery {
+
+    private String status;
 }

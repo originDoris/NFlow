@@ -23,7 +23,10 @@ public enum ErrorCode {
     NODE_TOO_MUCH_INPUT(2100, "too many input"),
     NODE_TOO_MUCH_OUTPUT(2101, "too many output"),
 
-
+    /**
+     * 5000 ~ 5999 业务参数异常
+     */
+    PARAM_INVALID(5000, "Invalid param"),
     ;
     private Integer code;
 

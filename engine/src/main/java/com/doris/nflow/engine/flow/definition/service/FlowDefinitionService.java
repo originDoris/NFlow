@@ -1,6 +1,8 @@
 package com.doris.nflow.engine.flow.definition.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.doris.nflow.engine.common.exception.ParamException;
+import com.doris.nflow.engine.flow.definition.enumerate.FlowDefinitionStatus;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
 import org.springframework.validation.annotation.Validated;
@@ -60,7 +62,21 @@ public interface FlowDefinitionService{
     List<FlowDefinition> queryList(@NotNull(message = "查询参数不能为空！") FlowDefinitionQuery flowDefinitionQuery);
 
 
+    /**
+     * 查询流程列表 分页
+     * @param flowDefinitionQuery
+     * @return
+     */
     IPage<FlowDefinition> queryPage(@NotNull(message = "查询参数不能为空！") FlowDefinitionQuery flowDefinitionQuery);
 
+
+    /**
+     * 更新流程定义状态
+     * @param status 状态枚举
+     * @param flowModuleCode 流程模块代码
+     * @return
+     */
+    boolean modifyStatus(@NotNull(message = "状态枚举不能为空！") FlowDefinitionStatus status,
+                         @NotBlank(message = "流程模块代码不能为空！") String flowModuleCode) throws ParamException;
 
 }

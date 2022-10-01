@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.flow.definition.model;
+package com.doris.nflow.engine.flow.deployment.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -6,50 +6,49 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.doris.nflow.engine.common.handler.BaseNodeHandler;
 import com.doris.nflow.engine.common.model.BaseModel;
 import com.doris.nflow.engine.common.model.node.BaseNode;
+import com.doris.nflow.engine.flow.deployment.enumerate.FlowDeploymentStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
  * @author: origindoris
- * @Title: FlowDefinition
- * @Description:
- * @date: 2022/9/29 13:51
+ * @Title: FlowDeployment
+ * @Description: 流程发布数据
+ * @date: 2022/10/1 10:07
  */
 @Data
-@TableName("flow_definition")
-public class FlowDefinition extends BaseModel {
-
+@TableName("flow_deployment")
+public class FlowDeployment extends BaseModel {
     public static final String FLOW_MODULE_CODE = "flow_module_code";
+    public static final String FLOW_DEPLOY_CODE = "flow_deploy_code";
 
-    /**
-     * 流程名称
-     */
+
+    @NotBlank(message = "流程发布代码不能为空！")
+    private String flowDeployCode;
+
+    @NotBlank(message = "流程模块代码不能为空！")
+    private String flowModuleCode;
+
     @NotBlank(message = "流程名称不能为空！")
     private String flowName;
 
+    private String tenantCode;
+
+    private String tenant;
+
     /**
-     * 流程模型列表
+     * 流程发布状态
+     * {@link FlowDeploymentStatus}
      */
+    private String status;
+
     @TableField(typeHandler = BaseNodeHandler.class)
     @NotEmpty(message = "流程定义模块不能为空！")
     private List<BaseNode> flowModule;
 
-    /**
-     * 流程模型代码
-     */
-    @NotBlank(message = "流程模块代码不能为空！")
-    private String flowModuleCode;
-
-    /**
-     * 流程状态
-     * {@link com.doris.nflow.engine.flow.definition.enumerate.FlowDefinitionStatus}
-     */
-    @NotNull(message = "流程状态不能为空！")
-    private String status;
 
 
 

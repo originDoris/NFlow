@@ -1,8 +1,7 @@
-package com.doris.nflow.engine.flow.definition.handler;
+package com.doris.nflow.engine.common.handler;
 
 import com.alibaba.fastjson2.JSON;
 import com.doris.nflow.engine.common.enumerate.NodeType;
-import com.doris.nflow.engine.common.handler.JsonToObjectHandler;
 import com.doris.nflow.engine.common.model.node.BaseNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;

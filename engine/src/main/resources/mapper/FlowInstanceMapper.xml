@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.doris.nflow.engine.flow.instance.mapper.FlowInstanceMapper">
+    <resultMap id="BaseResultMap" type="com.doris.nflow.engine.flow.instance.model.FlowInstance">
+        <result column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+        <result column="operator" property="operator"/>
+        <result column="tenant" property="tenant"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="caller" property="caller"/>
+        <result column="archive" property="archive"/>
+        <result column="remark" property="remark"/>
+        <result column="flow_module_code" property="flowModuleCode"/>
+        <result column="flow_instance_code" property="flowInstanceCode"/>
+        <result column="flow_deploy_code" property="flowDeployCode"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.flow.instance.model.FlowInstanceQuery">
+        select * from flow_instance
+        where archive = 0
+        <if test='search != null and search != ""'>
+            and (remark like concat('%',#{search},'%'))
+        </if>
+        <if test='status != null and status != ""'>
+            and status = #{status}
+        </if>
+        <if test='flowModuleCode != null and flowModuleCode != ""'>
+            and flow_module_code = #{flowModuleCode}
+        </if>
+        <if test='flowDeployCode != null and flowDeployCode != ""'>
+            and flow_deploy_code = #{flowDeployCode}
+        </if>
+        <if test='flowInstanceCode != null and flowInstanceCode != ""'>
+            and flow_instance_code = #{flowInstanceCode}
+        </if>
+    </select>
+
+
+</mapper>

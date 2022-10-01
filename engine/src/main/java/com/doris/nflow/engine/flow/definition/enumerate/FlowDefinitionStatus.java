@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.annotation.IEnum;
  * @Description: 流程定义状态
  * @date: 2022/9/29 16:08
  */
-public enum FlowDefinitionStatus implements IEnum<String> {
+public enum FlowDefinitionStatus {
 
     /**
      * 流程定义状态
@@ -33,10 +33,5 @@ public enum FlowDefinitionStatus implements IEnum<String> {
 
     public String getDesc() {
         return desc;
-    }
-
-    @Override
-    public String getValue() {
-        return this.code;
     }
 }
