@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.doris.nflow.engine.node.instance.model.NodeInstance;
 import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author: origindoris
@@ -22,5 +23,18 @@ public interface NodeInstanceMapper extends BaseMapper<NodeInstance> {
      * @return
      */
     IPage<NodeInstance> queryList(IPage<NodeInstance> page, NodeInstanceQuery nodeInstanceQuery);
+
+
+    /**
+     * 通过上游节点代码查询节点实例信息
+     *
+     * @param flowInstanceCode   流程实例代码
+     * @param sourceInstanceCode 上游实例代码
+     * @param nodeCode           节点代码
+     * @return
+     */
+    NodeInstance detailBySourceInstanceCode(@Param("flowInstanceCode") String flowInstanceCode,
+                                            @Param("sourceInstanceCode") String sourceInstanceCode,
+                                            @Param("nodeCode") String nodeCode);
 
 }

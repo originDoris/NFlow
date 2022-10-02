@@ -16,6 +16,8 @@
         <result column="node_code" property="nodeCode"/>
         <result column="flow_instance_code" property="flowInstanceCode"/>
         <result column="flow_deploy_code" property="flowDeployCode"/>
+        <result column="instance_data" property="instanceData"
+                typeHandler="com.doris.nflow.engine.node.instance.handler.InstanceDataHandler"/>
         <result column="type" property="type"/>
     </resultMap>
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceDataQuery">

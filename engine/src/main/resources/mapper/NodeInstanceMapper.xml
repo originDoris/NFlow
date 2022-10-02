@@ -42,6 +42,12 @@
             and flow_instance_code = #{flowInstanceCode}
         </if>
     </select>
+    <select id="detailBySourceInstanceCode" resultMap="BaseResultMap">
+        select * from node_instance where archive = 0
+        and flow_instance_code = #{flowInstanceCode}
+        and source_instance_code = #{sourceInstanceCode}
+        and node_code = #{nodeCode}
+    </select>
 
 
 </mapper>

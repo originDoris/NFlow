@@ -1,9 +1,13 @@
 package com.doris.nflow.engine.executor;
 
 import com.doris.nflow.engine.common.constant.FlowErrorMessageConstant;
+import com.doris.nflow.engine.common.context.RuntimeContext;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.DefinitionException;
+import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.BaseNode;
+import com.doris.nflow.engine.util.IdGenerator;
+import com.doris.nflow.engine.util.StrongUuidGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -67,7 +71,57 @@ public abstract class BaseNodeExecutor {
 
 
 
+    private static final IdGenerator idGenerator = new StrongUuidGenerator();
 
+
+    protected String genId() {
+        return idGenerator.getNextId();
+    }
+
+    /**
+     * 执行流程
+     * @param runtimeContext
+     * @throws ProcessException
+     */
+    public abstract void execute(RuntimeContext runtimeContext) throws ProcessException;
+
+    /**
+     * 提交流程
+     * @param runtimeContext
+     * @throws ProcessException
+     */
+    public abstract void commit(RuntimeContext runtimeContext) throws ProcessException;
+
+    /**
+     * 回滚流程
+     * @param runtimeContext
+     * @throws ProcessException
+     */
+    public abstract void rollback(RuntimeContext runtimeContext) throws ProcessException;
+
+    /**
+     * 流程是否已完成
+     * @param runtimeContext
+     * @return
+     * @throws ProcessException
+     */
+    protected abstract boolean isCompleted(RuntimeContext runtimeContext) throws ProcessException;
+
+    /**
+     * 获取执行顺序流程的执行器
+     * @param runtimeContext
+     * @return
+     * @throws ProcessException
+     */
+    protected abstract BaseNodeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException;
+
+    /**
+     * 获取执行回滚流程的执行器
+     * @param runtimeContext
+     * @return
+     * @throws ProcessException
+     */
+    protected abstract BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException;
 
 
 

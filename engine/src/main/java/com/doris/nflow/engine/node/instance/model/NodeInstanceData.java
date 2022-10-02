@@ -1,13 +1,16 @@
 package com.doris.nflow.engine.node.instance.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doris.nflow.engine.common.model.BaseModel;
 import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceDataType;
 import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.node.instance.handler.InstanceDataHandler;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author: origindoris
@@ -61,6 +64,9 @@ public class NodeInstanceData extends BaseModel {
      */
     @NotBlank(message = "流程状态不能为空！")
     private String status;
+
+    @TableField(typeHandler = InstanceDataHandler.class)
+    private List<InstanceData> instanceData;
 
 
     /**

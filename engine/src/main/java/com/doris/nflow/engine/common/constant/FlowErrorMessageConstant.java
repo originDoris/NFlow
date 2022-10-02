@@ -9,4 +9,6 @@ package com.doris.nflow.engine.common.constant;
 public class FlowErrorMessageConstant {
 
     public static final String NODE_DEFINITION_ERROR_MSG_FORMAT = "message={0}, nodeName={1}, nodeCode={2}";
+
+    public static final String NODE_INSTANCE_FORMAT = "nodeKey={0}, nodeName={1}, nodeInstanceId={2}";
 }

@@ -86,4 +86,11 @@ public class NodeInstanceServiceImpl implements NodeInstanceService {
         nodeInstance.setStatus(status.getCode());
         return modify(nodeInstance);
     }
+
+
+    @Override
+    public Optional<NodeInstance> detailBySourceInstanceCode(String flowInstanceCode, String sourceInstanceCode, String nodeCode) {
+        NodeInstance nodeInstance = nodeInstanceMapper.detailBySourceInstanceCode(flowInstanceCode, sourceInstanceCode, nodeCode);
+        return Optional.ofNullable(nodeInstance);
+    }
 }

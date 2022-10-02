@@ -78,4 +78,13 @@ public interface NodeInstanceService{
     boolean modifyStatus(@NotNull(message = "状态枚举不能为空！") NodeInstanceStatus status,
                          @NotBlank(message = "节点实例代码不能为空！") String nodeInstanceCode) throws ParamException;
 
+
+    /**
+     * 通过上游节点代码查询节点实例信息
+     * @param flowInstanceCode 流程实例代码
+     * @param sourceInstanceCode 上游实例代码
+     * @param nodeCode 节点代码
+     * @return
+     */
+    Optional<NodeInstance> detailBySourceInstanceCode(String flowInstanceCode, String sourceInstanceCode, String nodeCode);
 }
