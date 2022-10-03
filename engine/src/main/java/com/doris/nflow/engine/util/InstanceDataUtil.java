@@ -3,9 +3,11 @@ package com.doris.nflow.engine.util;
 import com.doris.nflow.engine.common.enumerate.DataType;
 import com.doris.nflow.engine.node.instance.model.InstanceData;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,6 +17,17 @@ import java.util.Map;
  * @date: 2022/10/3 10:58
  */
 public class InstanceDataUtil {
+
+    public static Map<String, InstanceData> getInstanceDataMap(List<InstanceData> instanceDataList) {
+        if (CollectionUtils.isEmpty(instanceDataList)) {
+            return MapUtils.EMPTY_MAP;
+        }
+        Map<String, InstanceData> instanceDataMap = Maps.newHashMap();
+        instanceDataList.forEach(instanceData -> {
+            instanceDataMap.put(instanceData.getKey(), instanceData);
+        });
+        return instanceDataMap;
+    }
 
 
     public static Map<String, Object> parseInstanceDataMap(Map<String, InstanceData> instanceDataMap) {

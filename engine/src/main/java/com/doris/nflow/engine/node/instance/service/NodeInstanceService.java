@@ -81,10 +81,13 @@ public interface NodeInstanceService{
 
     /**
      * 通过上游节点代码查询节点实例信息
-     * @param flowInstanceCode 流程实例代码
+     *
+     * @param flowInstanceCode   流程实例代码
      * @param sourceInstanceCode 上游实例代码
-     * @param nodeCode 节点代码
+     * @param nodeCode           节点代码
      * @return
      */
     Optional<NodeInstance> detailBySourceInstanceCode(String flowInstanceCode, String sourceInstanceCode, String nodeCode);
+
+
 }

@@ -29,6 +29,10 @@ public enum ErrorCode {
     GET_OUTGOING_FAILED(3000, "Get outgoing failed"),
     MISSING_DATA(3001, "Miss data"),
     GROOVY_CALCULATE_FAILED(3002, "Groovy calculate failed"),
+    GET_NODE_INSTANCE_FAILED(3003, "Get nodeInstance failed"),
+    NO_USER_TASK_TO_ROLLBACK(3004, "No userTask to rollback"),
+    UNSUPPORTED_ELEMENT_TYPE(3005, "Unsupported element type"),
+    COMMIT_FAILED(3006, "Commit task failed"),
 
     /**
      * 5000 ~ 5999 业务参数异常

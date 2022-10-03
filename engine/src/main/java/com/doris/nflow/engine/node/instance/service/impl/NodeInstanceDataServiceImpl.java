@@ -77,4 +77,9 @@ public class NodeInstanceDataServiceImpl implements NodeInstanceDataService {
         Page<NodeInstanceData> page = new Page<>(nodeInstanceDataQuery.getPageNo(), nodeInstanceDataQuery.getPageSize());
         return nodeInstanceDataMapper.queryList(page, nodeInstanceDataQuery);
     }
+
+    @Override
+    public Optional<NodeInstanceData> detailByFlowInstanceCodeAndInstanceDataCode(String flowInstanceCode, String nodeInstanceDataCode) {
+        return null;
+    }
 }

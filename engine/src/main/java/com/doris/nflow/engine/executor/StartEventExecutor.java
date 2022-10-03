@@ -10,13 +10,14 @@ import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
 import com.doris.nflow.engine.node.instance.model.NodeInstance;
+import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: origindoris
@@ -28,8 +29,8 @@ import java.util.Map;
 @Slf4j
 public class StartEventExecutor extends RuntimeExecutor {
 
-    public StartEventExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext) {
-        super(nodeInstanceService, executorContext, expressionCalculatorContext);
+    public StartEventExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
+        super(nodeInstanceService, executorContext, expressionCalculatorContext, nodeInstanceDataService);
     }
 
     @Override
@@ -49,19 +50,13 @@ public class StartEventExecutor extends RuntimeExecutor {
     }
 
     @Override
-    protected BaseNodeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException {
-        BaseNode currentNodeModel = runtimeContext.getCurrentNodeModel();
-        Map<String, BaseNode> baseNodeMap = runtimeContext.getBaseNodeMap();
+    protected void preRollback(RuntimeContext runtimeContext) throws ProcessException {
+        runtimeContext.setCurrentNodeInstance(runtimeContext.getSuspendNodeInstance());
+        runtimeContext.setNodeInstanceList(Collections.emptyList());
 
-        BaseNode nextNode;
-        if (currentNodeModel.getOutput().size() == 1) {
-            nextNode = getUniqueNextNode(currentNodeModel, baseNodeMap);
-        } else {
-            nextNode = calculateNextNode(currentNodeModel, baseNodeMap, runtimeContext.getInstanceDataMap());
-        }
-        log.info("getExecuteExecutor.||nextNode={}||runtimeContext={}", nextNode, runtimeContext);
-        runtimeContext.setCurrentNodeModel(nextNode);
-        return executorContext.getRuntimeExecutor(nextNode.getType());
+        log.warn("postRollback: reset runtimeContext.||flowInstanceId={}||nodeKey={}||nodeType={}",
+                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getCode(), runtimeContext.getCurrentNodeModel().getType());
+        throw new ProcessException(ErrorCode.NO_USER_TASK_TO_ROLLBACK, "It's a startEvent.");
     }
 
 

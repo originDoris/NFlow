@@ -12,6 +12,8 @@ import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
 import com.doris.nflow.engine.node.instance.model.InstanceData;
 import com.doris.nflow.engine.node.instance.model.NodeInstance;
+import com.doris.nflow.engine.node.instance.model.NodeInstanceData;
+import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import com.doris.nflow.engine.util.BaseNodeUtil;
 import com.doris.nflow.engine.util.InstanceDataUtil;
@@ -39,10 +41,13 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
     protected final ExecutorContext executorContext;
 
     protected final ExpressionCalculatorContext expressionCalculatorContext;
-    protected RuntimeExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext) {
+
+    protected final NodeInstanceDataService nodeInstanceDataService;
+    protected RuntimeExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
         this.nodeInstanceService = nodeInstanceService;
         this.executorContext = executorContext;
         this.expressionCalculatorContext = expressionCalculatorContext;
+        this.nodeInstanceDataService = nodeInstanceDataService;
     }
 
 
@@ -132,12 +137,138 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
     @Override
     public void commit(RuntimeContext runtimeContext) throws ProcessException {
+        preCommit(runtimeContext);
 
+        try {
+            doCommit(runtimeContext);
+        } catch (SuspendException se) {
+            log.warn("SuspendException.");
+            throw se;
+        } finally {
+            postCommit(runtimeContext);
+        }
     }
+
+
+    protected void preCommit(RuntimeContext runtimeContext) throws ProcessException {
+        log.warn("preCommit: unsupported element type.||flowInstanceId={}||elementType={}",
+                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getType());
+        throw new ProcessException(ErrorCode.UNSUPPORTED_ELEMENT_TYPE);
+    }
+
+    protected void doCommit(RuntimeContext runtimeContext) throws ProcessException {
+    }
+
+    protected void postCommit(RuntimeContext runtimeContext) throws ProcessException {
+    }
+
 
     @Override
     public void rollback(RuntimeContext runtimeContext) throws ProcessException {
+        try {
+            preRollback(runtimeContext);
+            doRollback(runtimeContext);
+        } catch (SuspendException se) {
+            log.warn("SuspendException.");
+            throw se;
+        } catch (ReentrantException re) {
+            log.warn("ReentrantException: reentrant rollback.");
+        } finally {
+            postRollback(runtimeContext);
+        }
+    }
 
+
+    protected void preRollback(RuntimeContext runtimeContext) throws ProcessException {
+        String flowInstanceCode = runtimeContext.getFlowInstanceCode();
+        String nodeInstanceCode, nodeCode;
+        NodeInstance currentNodeInstance;
+        if (runtimeContext.getCurrentNodeInstance() == null) {
+            currentNodeInstance = runtimeContext.getSuspendNodeInstance();
+        } else {
+            nodeInstanceCode = runtimeContext.getCurrentNodeInstance().getSourceNodeInstanceCode();
+            Optional<NodeInstance> nodeInstanceDetail = nodeInstanceService.detail(nodeInstanceCode);
+            if (nodeInstanceDetail.isEmpty()) {
+                log.warn("preRollback failed: cannot find currentNodeInstancePO from db."
+                        + "||flowInstanceId={}||nodeInstanceId={}", flowInstanceCode, nodeInstanceCode);
+                throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_FAILED);
+            }
+            currentNodeInstance = new NodeInstance();
+            BeanUtils.copyProperties(currentNodeInstance, currentNodeInstance);
+
+            String currentInstanceDataCode = currentNodeInstance.getInstanceDataCode();
+            runtimeContext.setInstanceDataCode(currentInstanceDataCode);
+            Optional<NodeInstanceData> nodeInstanceDataOptional = nodeInstanceDataService.detailByFlowInstanceCodeAndInstanceDataCode(flowInstanceCode, currentInstanceDataCode);
+            if (nodeInstanceDataOptional.isPresent()) {
+                NodeInstanceData nodeInstanceData = nodeInstanceDataOptional.get();
+                Map<String, InstanceData> currentInstanceDataMap = InstanceDataUtil.getInstanceDataMap(nodeInstanceData.getInstanceData());
+                runtimeContext.setInstanceDataMap(currentInstanceDataMap);
+            }
+        }
+        runtimeContext.setCurrentNodeInstance(currentNodeInstance);
+
+        nodeInstanceCode = currentNodeInstance.getNodeInstanceCode();
+        nodeCode = currentNodeInstance.getNodeCode();
+        String status = currentNodeInstance.getStatus();
+        if (Objects.equals(status, NodeInstanceStatus.REVOKE.getCode())) {
+            log.warn("preRollback: reentrant process.||flowInstanceId={}||nodeInstance={}||nodeKey={}", flowInstanceCode, nodeInstanceCode, nodeCode);
+            throw new ReentrantException(ErrorCode.REENTRANT_WARNING);
+        }
+        log.info("preRollback done.||flowInstanceId={}||nodeInstance={}||nodeKey={}", flowInstanceCode, nodeInstanceCode, nodeCode);
+    }
+
+    /**
+     * Common rollback: overwrite it in customized elementExecutor or do nothing
+     *
+     * @throws Exception
+     */
+    protected void doRollback(RuntimeContext runtimeContext) throws ProcessException {
+    }
+
+    /**
+     * Update runtimeContext: update currentNodeInstance.status to DISABLED and add it to nodeInstanceList
+     *
+     * @throws Exception
+     */
+    protected void postRollback(RuntimeContext runtimeContext) throws ProcessException {
+        NodeInstance currentNodeInstance = runtimeContext.getCurrentNodeInstance();
+        currentNodeInstance.setStatus(NodeInstanceStatus.REVOKE.getCode());
+        runtimeContext.getNodeInstanceList().add(currentNodeInstance);
+    }
+
+    /**
+     * Get elementExecutor to rollback:
+     * Get sourceNodeInstanceId from currentNodeInstance and get sourceElement
+     *
+     * @return
+     * @throws Exception
+     */
+    @Override
+    protected BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException {
+        String flowInstanceId = runtimeContext.getFlowInstanceCode();
+        NodeInstance currentNodeInstance = runtimeContext.getCurrentNodeInstance();
+
+        String sourceNodeInstanceCode = currentNodeInstance.getSourceNodeInstanceCode();
+        if (StringUtils.isBlank(sourceNodeInstanceCode)) {
+            log.warn("getRollbackExecutor: there's no sourceNodeInstance(startEvent)."
+                    + "||flowInstanceId={}||nodeInstanceId={}", flowInstanceId, currentNodeInstance.getFlowDeployCode());
+            return null;
+        }
+
+        // TODO: 2019/12/13 get from cache
+        Optional<NodeInstance> detail = nodeInstanceService.detail(sourceNodeInstanceCode);
+        if (detail.isEmpty()) {
+            log.warn("getRollbackExecutor failed: cannot find sourceNodeInstance from db."
+                    + "||flowInstanceCode={}||sourceNodeInstanceCode={}", flowInstanceId, sourceNodeInstanceCode);
+            throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_FAILED);
+        }
+        NodeInstance sourceNodeInstance = detail.get();
+
+        BaseNode sourceNode =runtimeContext.getBaseNodeMap().get(sourceNodeInstance.getNodeCode());
+
+        // TODO: 2019/12/18
+        runtimeContext.setCurrentNodeModel(sourceNode);
+        return executorContext.getRuntimeExecutor(sourceNode.getType());
     }
 
     @Override
@@ -205,11 +336,6 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
     protected boolean processCondition(String expression, Map<String, InstanceData> instanceDataMap,String type) throws ProcessException {
         Map<String, Object> dataMap = InstanceDataUtil.parseInstanceDataMap(instanceDataMap);
         return expressionCalculatorContext.getExpressionCalculator(type).calculate(expression, dataMap);
-    }
-
-    @Override
-    protected BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException {
-        return null;
     }
 
 }
