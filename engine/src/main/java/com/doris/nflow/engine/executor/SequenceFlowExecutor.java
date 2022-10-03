@@ -1,6 +1,8 @@
 package com.doris.nflow.engine.executor;
 
 import com.doris.nflow.engine.common.constant.NodeTypeConstant;
+import com.doris.nflow.engine.common.context.ExecutorContext;
+import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,8 +17,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SequenceFlowExecutor extends RuntimeExecutor {
 
-    public SequenceFlowExecutor(NodeInstanceService nodeInstanceService) {
-        super(nodeInstanceService);
+    public SequenceFlowExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext) {
+        super(nodeInstanceService, executorContext, expressionCalculatorContext);
     }
 
 

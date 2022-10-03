@@ -24,6 +24,13 @@ public enum ErrorCode {
     NODE_TOO_MUCH_OUTPUT(2101, "too many output"),
 
     /**
+     * 3000 ~ 3999 流程执行异常
+     */
+    GET_OUTGOING_FAILED(3000, "Get outgoing failed"),
+    MISSING_DATA(3001, "Miss data"),
+    GROOVY_CALCULATE_FAILED(3002, "Groovy calculate failed"),
+
+    /**
      * 5000 ~ 5999 业务参数异常
      */
     PARAM_INVALID(5000, "Invalid param"),

@@ -1,6 +1,8 @@
 package com.doris.nflow.engine.executor;
 
 import com.doris.nflow.engine.common.constant.NodeTypeConstant;
+import com.doris.nflow.engine.common.context.ExecutorContext;
+import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.DefinitionException;
@@ -26,8 +28,8 @@ import java.util.List;
 public class EndEventExecutor extends RuntimeExecutor {
 
 
-    public EndEventExecutor(NodeInstanceService nodeInstanceService) {
-        super(nodeInstanceService);
+    public EndEventExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext) {
+        super(nodeInstanceService, executorContext, expressionCalculatorContext);
     }
 
     @Override

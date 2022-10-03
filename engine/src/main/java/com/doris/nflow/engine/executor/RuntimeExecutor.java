@@ -1,19 +1,28 @@
 package com.doris.nflow.engine.executor;
 
+import com.doris.nflow.engine.common.context.ExecutorContext;
+import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
+import com.doris.nflow.engine.common.enumerate.ErrorCode;
+import com.doris.nflow.engine.common.enumerate.NodeType;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.exception.ReentrantException;
 import com.doris.nflow.engine.common.exception.SuspendException;
 import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.node.instance.model.InstanceData;
 import com.doris.nflow.engine.node.instance.model.NodeInstance;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
+import com.doris.nflow.engine.util.BaseNodeUtil;
+import com.doris.nflow.engine.util.InstanceDataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -27,8 +36,13 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
     protected final NodeInstanceService nodeInstanceService;
 
-    protected RuntimeExecutor(NodeInstanceService nodeInstanceService) {
+    protected final ExecutorContext executorContext;
+
+    protected final ExpressionCalculatorContext expressionCalculatorContext;
+    protected RuntimeExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext) {
         this.nodeInstanceService = nodeInstanceService;
+        this.executorContext = executorContext;
+        this.expressionCalculatorContext = expressionCalculatorContext;
     }
 
 
@@ -133,11 +147,69 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
     @Override
     protected BaseNodeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException {
-        return null;
+        Map<String, BaseNode> baseNodeMap = runtimeContext.getBaseNodeMap();
+        BaseNode baseNode = getUniqueNextNode(runtimeContext.getCurrentNodeModel(), baseNodeMap);
+        runtimeContext.setCurrentNodeModel(baseNode);
+        return executorContext.getRuntimeExecutor(baseNode.getType());
+    }
+
+    protected BaseNode getUniqueNextNode(BaseNode currentNode, Map<String, BaseNode> baseNodeMap) {
+        List<String> output = currentNode.getOutput();
+        String nextNodeKey = output.get(0);
+        BaseNode baseNode = baseNodeMap.get(nextNodeKey);
+        while (Objects.equals(baseNode.getType(), NodeType.SEQUENCE_FLOW_NODE.getCode())) {
+            baseNode = getUniqueNextNode(baseNode, baseNodeMap);
+        }
+        return baseNode;
+    }
+
+
+
+    protected BaseNode calculateNextNode(BaseNode currentBaseNode, Map<String, BaseNode> baseNodeMap,
+                                         Map<String, InstanceData> instanceDataMap) throws ProcessException {
+        BaseNode nextNode = calculateOutgoing(currentBaseNode, baseNodeMap, instanceDataMap);
+
+        while (Objects.equals(nextNode.getType(), NodeType.SEQUENCE_FLOW_NODE.getCode())) {
+            nextNode = getUniqueNextNode(nextNode, baseNodeMap);
+        }
+        return nextNode;
+    }
+
+    private BaseNode calculateOutgoing(BaseNode baseNode, Map<String, BaseNode> baseNodeMap,
+                                       Map<String, InstanceData> instanceDataMap) throws ProcessException {
+        BaseNode defaultNode = null;
+
+        List<String> outputList = baseNode.getOutput();
+        for (String key : outputList) {
+            BaseNode outputSequenceNode = baseNodeMap.get(key);
+            String condition = BaseNodeUtil.getCondition(outputSequenceNode);
+            String conditionType = BaseNodeUtil.getConditionType(outputSequenceNode);
+            if (StringUtils.isNotBlank(condition) && processCondition(condition, instanceDataMap, conditionType)) {
+
+                return outputSequenceNode;
+            }
+
+            if (BaseNodeUtil.isDefaultCondition(outputSequenceNode)) {
+                defaultNode = outputSequenceNode;
+            }
+        }
+        if (defaultNode != null) {
+            log.info("calculateOutgoing: return defaultBaseNode.||nodeCode={}", baseNode.getCode());
+            return defaultNode;
+        }
+
+        log.warn("calculateOutgoing failed.||nodeCode={}", baseNode.getCode());
+        throw new ProcessException(ErrorCode.GET_OUTGOING_FAILED);
+    }
+
+    protected boolean processCondition(String expression, Map<String, InstanceData> instanceDataMap,String type) throws ProcessException {
+        Map<String, Object> dataMap = InstanceDataUtil.parseInstanceDataMap(instanceDataMap);
+        return expressionCalculatorContext.getExpressionCalculator(type).calculate(expression, dataMap);
     }
 
     @Override
     protected BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException {
         return null;
     }
+
 }
