@@ -5,6 +5,7 @@ import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.enumerate.NodeType;
+import com.doris.nflow.engine.common.exception.DefinitionException;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.exception.ReentrantException;
 import com.doris.nflow.engine.common.exception.SuspendException;
@@ -50,6 +51,20 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
         this.nodeInstanceDataService = nodeInstanceDataService;
     }
 
+    @Override
+    protected void checkInput(BaseNode baseNode) throws DefinitionException {
+        super.checkInput(baseNode);
+    }
+
+    @Override
+    protected void checkOutput(BaseNode baseNode) throws DefinitionException {
+        super.checkOutput(baseNode);
+    }
+
+    public void valid(BaseNode baseNode) throws DefinitionException {
+        checkInput(baseNode);
+        checkOutput(baseNode);
+    }
 
     @Override
     public void execute(RuntimeContext runtimeContext) throws ProcessException {
