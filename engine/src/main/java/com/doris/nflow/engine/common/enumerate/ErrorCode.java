@@ -27,6 +27,7 @@ public enum ErrorCode {
 
     START_NODE_INVALID(2103, "Zero or more than one start node"),
     END_NODE_INVALID(2104, "No end node"),
+    GET_INSTANCE_DATA_FAILED(2105, "Get instanceData failed"),
 
     /**
      * 3000 ~ 3999 流程执行异常
@@ -38,6 +39,12 @@ public enum ErrorCode {
     NO_USER_TASK_TO_ROLLBACK(3004, "No userTask to rollback"),
     UNSUPPORTED_ELEMENT_TYPE(3005, "Unsupported element type"),
     COMMIT_FAILED(3006, "Commit task failed"),
+    SAVE_FLOW_INSTANCE_FAILED(3007, "Save flowInstance failed"),
+    SAVE_NODE_INSTANCE_DATA_FAILED(3008, "Save nodeInstanceData failed"),
+    START_NODE_IS_NULL(3009, "start event node is null"),
+    NODE_DOES_NOT_EXIST(3010, " node is null"),
+    GET_NODE_FAILED(3011, "Get current node failed"),
+    ROLLBACK_FAILED(4002, "Rollback task failed"),
 
     /**
      * 4000 ~ 4999 操作权限异常
@@ -66,5 +73,9 @@ public enum ErrorCode {
     ErrorCode(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public static boolean isSuccess(Integer code){
+        return code >= 1000 && code < 2000;
     }
 }

@@ -17,6 +17,14 @@
         <result column="flow_instance_code" property="flowInstanceCode"/>
         <result column="status" property="status"/>
     </resultMap>
+    <insert id="replace">
+        replace into (id,create_time,modify_time,operator,tenant,tenant_code,caller,archive,remark,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
+            values
+        <foreach collection="list" open="" close="" item="param" separator=",">
+            (#{param.id},#{param.createTime},#{param.modifyTime},#{param.operator},#{param.tenant},#{param.tenantCode},#{param.caller},#{param.archive},#{param.remark},
+            #{param.nodeInstanceCode},#{param.instanceDataCode},#{param.nodeCode},#{param.flowInstanceCode},#{param.status})
+        </foreach>;
+    </insert>
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery">
         select * from node_instance_log
         where archive = 0

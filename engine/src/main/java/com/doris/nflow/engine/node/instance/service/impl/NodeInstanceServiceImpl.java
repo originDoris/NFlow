@@ -93,4 +93,18 @@ public class NodeInstanceServiceImpl implements NodeInstanceService {
         NodeInstance nodeInstance = nodeInstanceMapper.detailBySourceInstanceCode(flowInstanceCode, sourceInstanceCode, nodeCode);
         return Optional.ofNullable(nodeInstance);
     }
+
+
+    @Override
+    public boolean replace(List<NodeInstance> nodeInstanceList) {
+       return nodeInstanceMapper.replace(nodeInstanceList);
+    }
+
+
+    @Override
+    public List<NodeInstance> queryListByFlowInstanceCode(String flowInstanceCode) {
+        QueryWrapper<NodeInstance> wrapper = new QueryWrapper<>();
+        wrapper.eq(NodeInstance.FLOW_INSTANCE_CODE, flowInstanceCode);
+        return nodeInstanceMapper.selectList(wrapper);
+    }
 }

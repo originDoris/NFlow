@@ -48,7 +48,7 @@ public class RuntimeContext implements Serializable {
     /**
      * 流程实例状态
      */
-    private int flowInstanceStatus;
+    private String flowInstanceStatus;
 
     private NodeInstance suspendNodeInstance;
 
@@ -77,5 +77,5 @@ public class RuntimeContext implements Serializable {
     /**
      * 流程状态
      */
-    private int processStatus;
+    private String processStatus;
 }

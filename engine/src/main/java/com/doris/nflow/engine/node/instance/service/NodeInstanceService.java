@@ -8,6 +8,7 @@ import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -90,4 +91,18 @@ public interface NodeInstanceService{
     Optional<NodeInstance> detailBySourceInstanceCode(String flowInstanceCode, String sourceInstanceCode, String nodeCode);
 
 
+    /**
+     * 保存或更新数据
+     * @param nodeInstanceList 节点实例列表
+     * @return
+     */
+    boolean replace(@NotEmpty(message = "节点实例列表不能为空！") List<NodeInstance> nodeInstanceList);
+
+
+    /**
+     * 根据流程实例代码查询节点实例列表
+     * @param flowInstanceCode 流程实例代码
+     * @return
+     */
+    List<NodeInstance> queryListByFlowInstanceCode(@NotBlank(message = "流程实例代码不能为空！") String flowInstanceCode);
 }

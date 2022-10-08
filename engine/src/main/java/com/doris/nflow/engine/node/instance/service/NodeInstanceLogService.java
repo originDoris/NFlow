@@ -11,6 +11,7 @@ import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -65,4 +66,6 @@ public interface NodeInstanceLogService {
      */
     IPage<NodeInstanceLog> queryPage(@NotNull(message = "查询参数不能为空！") NodeInstanceLogQuery nodeInstanceLogQuery);
 
+
+    boolean replace(@NotEmpty(message = "节点实例日志列表不能为空！") List<NodeInstanceLog> nodeInstanceLogs);
 }

@@ -40,7 +40,6 @@ public class NodeInstanceData extends BaseModel {
     /**
      * 节点代码
      */
-    @NotBlank(message = "节点代码不能为空！")
     private String nodeCode;
 
     /**
@@ -58,12 +57,6 @@ public class NodeInstanceData extends BaseModel {
     @NotBlank(message = "流程模块代码不能为空！")
     private String flowModuleCode;
 
-    /**
-     * 流程实例状态
-     * {@link NodeInstanceStatus}
-     */
-    @NotBlank(message = "流程状态不能为空！")
-    private String status;
 
     @TableField(typeHandler = InstanceDataHandler.class)
     private List<InstanceData> instanceData;

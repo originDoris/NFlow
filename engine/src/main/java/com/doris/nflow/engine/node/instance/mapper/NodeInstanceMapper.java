@@ -7,6 +7,8 @@ import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author: origindoris
  * @Title: NodeInstanceMapper
@@ -37,4 +39,6 @@ public interface NodeInstanceMapper extends BaseMapper<NodeInstance> {
                                             @Param("sourceInstanceCode") String sourceInstanceCode,
                                             @Param("nodeCode") String nodeCode);
 
+
+    boolean replace(@Param("list") List<NodeInstance> nodeInstanceList);
 }

@@ -71,4 +71,9 @@ public class NodeInstanceLogServiceImpl implements NodeInstanceLogService {
         Page<NodeInstanceLog> page = new Page<>(nodeInstanceLogQuery.getPageNo(), nodeInstanceLogQuery.getPageSize());
         return nodeInstanceLogMapper.queryList(page, nodeInstanceLogQuery);
     }
+
+    @Override
+    public boolean replace(List<NodeInstanceLog> nodeInstanceLogs) {
+        return nodeInstanceLogMapper.replace(nodeInstanceLogs);
+    }
 }

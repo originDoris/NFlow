@@ -19,7 +19,7 @@ public class NodeInstance extends BaseModel {
 
     public static final String NODE_INSTANCE_CODE = "node_instance_code";
 
-
+    public static final String FLOW_INSTANCE_CODE = "flow_instance_code";
 
     /**
      * 节点实例代码

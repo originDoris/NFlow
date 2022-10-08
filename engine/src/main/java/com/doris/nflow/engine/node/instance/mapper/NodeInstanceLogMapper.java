@@ -7,6 +7,9 @@ import com.doris.nflow.engine.node.instance.model.NodeInstanceLog;
 import com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery;
 import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author: origindoris
@@ -19,10 +22,14 @@ public interface NodeInstanceLogMapper extends BaseMapper<NodeInstanceLog> {
 
     /**
      * 查询列表
-     * @param page 分页参数
+     *
+     * @param page                 分页参数
      * @param nodeInstanceLogQuery 节点实例日志查询参数
      * @return
      */
     IPage<NodeInstanceLog> queryList(IPage<NodeInstanceLog> page, NodeInstanceLogQuery nodeInstanceLogQuery);
+
+
+    boolean replace(@Param("list") List<NodeInstanceLog> nodeInstanceLogList);
 
 }
