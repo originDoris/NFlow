@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.common.model.result;
+package com.doris.nflow.engine.processor.model.result;
 
 import lombok.Builder;
 import lombok.Data;

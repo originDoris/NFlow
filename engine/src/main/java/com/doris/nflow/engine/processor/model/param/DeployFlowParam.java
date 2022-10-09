@@ -1,11 +1,8 @@
-package com.doris.nflow.engine.common.model.param;
+package com.doris.nflow.engine.processor.model.param;
 
-import com.doris.nflow.engine.common.model.node.BaseNode;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 /**
  * @author: origindoris

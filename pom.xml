@@ -11,7 +11,6 @@
     <modules>
         <module>engine</module>
         <module>api</module>
-        <module>api</module>
     </modules>
 
     <parent>

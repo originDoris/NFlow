@@ -1,7 +1,5 @@
-package com.doris.nflow.engine.common.model.param;
+package com.doris.nflow.engine.processor.model.param;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.doris.nflow.engine.common.handler.BaseNodeHandler;
 import com.doris.nflow.engine.common.model.node.BaseNode;
 import lombok.Data;
 
@@ -11,12 +9,13 @@ import java.util.List;
 
 /**
  * @author: origindoris
- * @Title: ModifyFlowParam
+ * @Title: CreateFlowParam
  * @Description:
- * @date: 2022/10/8 13:39
+ * @date: 2022/10/8 10:06
  */
 @Data
-public class ModifyFlowParam extends CommonParam {
+public class CreateFlowParam extends CommonParam {
+
     @NotBlank(message = "流程名称不能为空！")
     private String flowName;
 
@@ -26,12 +25,6 @@ public class ModifyFlowParam extends CommonParam {
     @NotEmpty(message = "流程定义模块不能为空！")
     private List<BaseNode> flowModule;
 
-
-    /**
-     * 流程模块代码
-     */
-    @NotEmpty(message = "流程定义模块代码不能为空！")
-    private String flowModuleCode;
-
     private String remark;
+
 }

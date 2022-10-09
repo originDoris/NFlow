@@ -1,11 +1,13 @@
 package com.doris.nflow.engine.node.instance.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doris.nflow.engine.common.model.BaseModel;
 import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Map;
 
 /**
  * @author: origindoris
@@ -42,6 +44,12 @@ public class NodeInstance extends BaseModel {
      */
     @NotBlank(message = "节点代码不能为空！")
     private String nodeCode;
+
+    @TableField(exist = false)
+    private String nodeName;
+
+    @TableField(exist = false)
+    private Map<String, Object> properties;
 
     /**
      * 上游节点代码

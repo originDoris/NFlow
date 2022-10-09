@@ -44,7 +44,11 @@ public enum ErrorCode {
     START_NODE_IS_NULL(3009, "start event node is null"),
     NODE_DOES_NOT_EXIST(3010, " node is null"),
     GET_NODE_FAILED(3011, "Get current node failed"),
-    ROLLBACK_FAILED(4002, "Rollback task failed"),
+    ROLLBACK_FAILED(3012, "Rollback task failed"),
+    GET_FLOW_DEPLOYMENT_FAILED(3013, "Get flowDeployment failed"),
+    GET_FLOW_INSTANCE_FAILED(3014, "Get flowInstance failed"),
+    COMMIT_REJECTRD(3015, "Commit rejected, flow is terminate"),
+    ROLLBACK_REJECTRD(3016, "Rollback rejected, non-running flowInstance to rollback"),
 
     /**
      * 4000 ~ 4999 操作权限异常
@@ -56,7 +60,11 @@ public enum ErrorCode {
      * 5000 ~ 5999 业务参数异常
      */
     PARAM_INVALID(5000, "Invalid param"),
-    FLOW_INVALID(5001,"invalid flow")
+    FLOW_INVALID(5001,"invalid flow"),
+    /**
+     * 6000 ~ 6999 系统错误
+     */
+    SYSTEM_ERROR(6000, "System error"),
     ;
     private Integer code;
 

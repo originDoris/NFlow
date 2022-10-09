@@ -3,8 +3,11 @@ package com.doris.nflow.engine.util;
 import com.doris.nflow.engine.common.constant.NodePropertyConstant;
 import com.doris.nflow.engine.common.enumerate.NodeType;
 import com.doris.nflow.engine.common.model.node.BaseNode;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,6 +25,17 @@ public class BaseNodeUtil {
             return null;
         }
         return (String) properties.get(NodePropertyConstant.CONDITION);
+    }
+
+    public static Map<String, BaseNode> getBaseNodeMap(List<BaseNode> baseNodes) {
+        if (CollectionUtils.isEmpty(baseNodes)) {
+            return null;
+        }
+        HashMap<String, BaseNode> map = new HashMap<>(baseNodes.size());
+        for (BaseNode baseNode : baseNodes) {
+            map.put(baseNode.getCode(), baseNode);
+        }
+        return map;
     }
 
     public static String getConditionType(BaseNode baseNode){

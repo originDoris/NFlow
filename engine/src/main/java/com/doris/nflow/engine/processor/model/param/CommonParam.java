@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.common.model.param;
+package com.doris.nflow.engine.processor.model.param;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
