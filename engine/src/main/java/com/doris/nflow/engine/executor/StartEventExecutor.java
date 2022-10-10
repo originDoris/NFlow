@@ -14,6 +14,7 @@ import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -29,7 +30,7 @@ import java.util.List;
 @Slf4j
 public class StartEventExecutor extends RuntimeExecutor {
 
-    public StartEventExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
+    public StartEventExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
         super(nodeInstanceService, executorContext, expressionCalculatorContext, nodeInstanceDataService);
     }
 

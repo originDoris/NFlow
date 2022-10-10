@@ -18,19 +18,16 @@
         <result column="status" property="status"/>
     </resultMap>
     <insert id="replace">
-        replace into (id,create_time,modify_time,operator,tenant,tenant_code,caller,archive,remark,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
+        replace into node_instance_log(id,create_time,modify_time,tenant,tenant_code,caller,archive,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
             values
         <foreach collection="list" open="" close="" item="param" separator=",">
-            (#{param.id},#{param.createTime},#{param.modifyTime},#{param.operator},#{param.tenant},#{param.tenantCode},#{param.caller},#{param.archive},#{param.remark},
+            (#{param.id},#{param.createTime},#{param.modifyTime},#{param.tenant},#{param.tenantCode},#{param.caller},#{param.archive},
             #{param.nodeInstanceCode},#{param.instanceDataCode},#{param.nodeCode},#{param.flowInstanceCode},#{param.status})
         </foreach>;
     </insert>
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery">
         select * from node_instance_log
         where archive = 0
-        <if test='search != null and search != ""'>
-            and (remark like concat('%',#{search},'%'))
-        </if>
         <if test='status != null and status != ""'>
             and status = #{status}
         </if>

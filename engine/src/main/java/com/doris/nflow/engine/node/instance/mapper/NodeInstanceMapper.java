@@ -6,6 +6,7 @@ import com.doris.nflow.engine.node.instance.model.NodeInstance;
 import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 

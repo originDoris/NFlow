@@ -5,12 +5,10 @@
         <result column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
-        <result column="operator" property="operator"/>
         <result column="tenant" property="tenant"/>
         <result column="tenant_code" property="tenantCode"/>
         <result column="caller" property="caller"/>
         <result column="archive" property="archive"/>
-        <result column="remark" property="remark"/>
         <result column="node_instance_code" property="nodeInstanceCode"/>
         <result column="source_node_instance_code" property="sourceNodeInstanceCode"/>
         <result column="instance_data_code" property="instanceDataCode"/>
@@ -21,13 +19,13 @@
         <result column="status" property="status"/>
     </resultMap>
     <insert id="replace">
-        replace into node_instance(id, create_time,modify_time,operator,tenant,tenant_code,caller,
-           archive,archive,remark,node_instance_code,source_node_instance_code,instance_data_code,node_code
+        replace into node_instance(id, create_time,modify_time,tenant,tenant_code,caller,
+           archive,node_instance_code,source_node_instance_code,instance_data_code,node_code,
            source_node_code,flow_instance_code,flow_deploy_code,status)
             values
             <foreach collection="list" separator="," item="param" close="" open="" >
-                (#{param.id}, #{param.createTime},#{param.modifyTime},#{param.operator},#{param.tenant},#{param.tenantCode},#{param.caller},
-                #{param.archive},#{param.remark},#{param.nodeInstanceCode},#{param.sourceNodeInstanceCode},#{param.instanceDataCode},#{param.nodeCode},
+                (#{param.id}, #{param.createTime},#{param.modifyTime},#{param.tenant},#{param.tenantCode},#{param.caller},
+                #{param.archive},#{param.nodeInstanceCode},#{param.sourceNodeInstanceCode},#{param.instanceDataCode},#{param.nodeCode},
                 #{param.sourceNodeCode},#{param.flowInstanceCode},#{param.flowDeployCode},#{param.status})
             </foreach>
             ;
@@ -35,9 +33,6 @@
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceQuery">
         select * from node_instance
         where archive = 0
-        <if test='search != null and search != ""'>
-            and (remark like concat('%',#{search},'%'))
-        </if>
         <if test='status != null and status != ""'>
             and status = #{status}
         </if>
@@ -57,7 +52,7 @@
     <select id="detailBySourceInstanceCode" resultMap="BaseResultMap">
         select * from node_instance where archive = 0
         and flow_instance_code = #{flowInstanceCode}
-        and source_instance_code = #{sourceInstanceCode}
+        and source_node_instance_code = #{sourceInstanceCode}
         and node_code = #{nodeCode}
     </select>
 

@@ -7,6 +7,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author: origindoris
@@ -21,13 +22,13 @@ public class CompletionMateDataHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.info("start insert fill ....");
-        this.strictInsertFill(metaObject, BaseModel.CREATE_TIME, LocalDateTime.class, LocalDateTime.now());
+        this.strictInsertFill(metaObject, BaseModel.CREATE_TIME, Date.class, new Date());
 
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.info("start modify fill ....");
-        this.strictUpdateFill(metaObject, BaseModel.MODIFY_TIME, LocalDateTime.class, LocalDateTime.now());
+        this.strictUpdateFill(metaObject, BaseModel.MODIFY_TIME, Date.class, new Date());
     }
 }

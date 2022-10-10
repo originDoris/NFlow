@@ -160,18 +160,14 @@ public class FlowExecutor extends BaseNodeExecutor {
     }
 
     private void postExecute(RuntimeContext runtimeContext, String processStatus) throws ProcessException {
-        //1.update context with processStatus
         if (Objects.equals(processStatus, ProcessStatus.SUCCESS.getCode())) {
-            //SUCCESS: update runtimeContext: update suspendNodeInstance
             if (runtimeContext.getCurrentNodeInstance() != null) {
                 runtimeContext.setSuspendNodeInstance(runtimeContext.getCurrentNodeInstance());
             }
         }
 
-        //2.save nodeInstanceList to db
         saveNodeInstanceList(runtimeContext, NodeInstanceLogType.SYSTEM.getCode());
 
-        //3.update flowInstance status while completed
         if (isCompleted(runtimeContext)) {
             try {
                 flowInstanceService.modifyStatus(FlowInstanceStatus.COMPLETE, runtimeContext.getFlowInstanceCode());
@@ -227,7 +223,7 @@ public class FlowExecutor extends BaseNodeExecutor {
         nodeInstanceResult.setFlowDeployCode(runtimeContext.getFlowDeployCode());
         nodeInstanceResult.setTenantCode(runtimeContext.getTenantCode());
         nodeInstanceResult.setCaller(runtimeContext.getCaller());
-
+        nodeInstanceResult.setArchive(false);
         return nodeInstanceResult;
     }
 
@@ -272,7 +268,7 @@ public class FlowExecutor extends BaseNodeExecutor {
             suspendNodeInstance.setNodeCode(nodeInstance.getNodeCode());
             suspendNodeInstance.setSourceNodeInstanceCode(nodeInstance.getSourceNodeInstanceCode());
             suspendNodeInstance.setSourceNodeCode(nodeInstance.getSourceNodeCode());
-            suspendNodeInstance.setInstanceDataCode(nodeInstance.getNodeInstanceCode());
+            suspendNodeInstance.setInstanceDataCode(nodeInstance.getInstanceDataCode());
             suspendNodeInstance.setStatus(nodeInstance.getStatus());
             throw new ReentrantException(ErrorCode.REENTRANT_WARNING);
         }
@@ -293,10 +289,10 @@ public class FlowExecutor extends BaseNodeExecutor {
 
         Map<String, InstanceData> commitDataMap = runtimeContext.getInstanceDataMap();
         if (MapUtils.isNotEmpty(commitDataMap)) {
-            String instanceCode = genId();
+            instanceDataCode = genId();
             instanceDataMap.putAll(commitDataMap);
 
-            NodeInstanceData commitInstanceData = buildCommitInstanceData(runtimeContext, instanceCode,
+            NodeInstanceData commitInstanceData = buildCommitInstanceData(runtimeContext,nodeInstanceCode ,
                     nodeInstance.getNodeCode(), instanceDataCode, instanceDataMap);
             nodeInstanceDataService.save(commitInstanceData);
         }

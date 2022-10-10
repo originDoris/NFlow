@@ -21,6 +21,7 @@ import com.doris.nflow.engine.util.InstanceDataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Optional;
  * @date: 2022/10/2 10:56
  */
 @Slf4j
+@Service
 public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
     protected final NodeInstanceService nodeInstanceService;

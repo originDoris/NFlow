@@ -11,6 +11,7 @@ import com.doris.nflow.engine.node.instance.model.NodeInstance;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 public class ExclusiveGatewayExecutor extends RuntimeExecutor {
 
 
-    public ExclusiveGatewayExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
+    public ExclusiveGatewayExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
         super(nodeInstanceService, executorContext, expressionCalculatorContext, nodeInstanceDataService);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: origindoris
@@ -18,7 +19,7 @@ import java.util.HashMap;
 public class ExecutorContext {
 
     @Autowired
-    private HashMap<String, RuntimeExecutor> runtimeExecutorHashMap;
+    private Map<String, RuntimeExecutor> runtimeExecutorHashMap;
 
 
     public RuntimeExecutor getRuntimeExecutor(String type){

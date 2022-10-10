@@ -19,7 +19,7 @@ import java.util.List;
  * @date: 2022/10/1 12:20
  */
 @Data
-@TableName("instance_data")
+@TableName(value = "instance_data", autoResultMap = true)
 public class NodeInstanceData extends BaseModel {
 
     public static final String NODE_INSTANCE_CODE = "node_instance_code";

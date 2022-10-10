@@ -15,6 +15,7 @@ import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -31,7 +32,7 @@ import java.util.Objects;
 @Slf4j
 public class UserTaskExecutor extends RuntimeExecutor {
 
-    public UserTaskExecutor(NodeInstanceService nodeInstanceService, ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
+    public UserTaskExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
         super(nodeInstanceService, executorContext, expressionCalculatorContext, nodeInstanceDataService);
     }
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
 /**
  * @author: origindoris

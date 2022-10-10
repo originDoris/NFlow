@@ -16,7 +16,7 @@ import java.util.Map;
  * @date: 2022/10/1 12:20
  */
 @Data
-@TableName("node_instance")
+@TableName(value = "node_instance",autoResultMap = true)
 public class NodeInstance extends BaseModel {
 
     public static final String NODE_INSTANCE_CODE = "node_instance_code";
@@ -74,4 +74,10 @@ public class NodeInstance extends BaseModel {
      */
     @NotBlank(message = "流程状态不能为空！")
     private String status;
+
+    @TableField(exist = false)
+    private String operator;
+
+    @TableField(exist = false)
+    private String remark;
 }

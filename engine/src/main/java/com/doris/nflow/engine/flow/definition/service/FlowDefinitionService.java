@@ -1,11 +1,11 @@
 package com.doris.nflow.engine.flow.definition.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.doris.nflow.engine.common.exception.ParamException;
 import com.doris.nflow.engine.flow.definition.enumerate.FlowDefinitionStatus;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

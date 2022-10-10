@@ -21,7 +21,7 @@ public class InstanceDataUtil {
 
     public static Map<String, InstanceData> getInstanceDataMap(List<InstanceData> instanceDataList) {
         if (CollectionUtils.isEmpty(instanceDataList)) {
-            return MapUtils.EMPTY_MAP;
+            return new HashMap<>(1);
         }
         Map<String, InstanceData> instanceDataMap = Maps.newHashMap();
         instanceDataList.forEach(instanceData -> {

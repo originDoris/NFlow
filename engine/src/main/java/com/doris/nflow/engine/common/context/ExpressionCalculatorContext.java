@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: origindoris
@@ -19,7 +20,7 @@ import java.util.HashMap;
 public class ExpressionCalculatorContext {
 
     @Autowired
-    private HashMap<String, ExpressionCalculator> expressionCalculatorHashMap;
+    private Map<String, ExpressionCalculator> expressionCalculatorHashMap;
 
 
     public ExpressionCalculator getExpressionCalculator(String type){

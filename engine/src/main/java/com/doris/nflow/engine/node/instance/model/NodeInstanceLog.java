@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
  * @date: 2022/10/1 12:20
  */
 @Data
-@TableName("node_instance_log")
+@TableName(value = "node_instance_log",autoResultMap = true)
 public class NodeInstanceLog extends BaseModel {
 
     public static final String NODE_INSTANCE_CODE = "node_instance_code";

@@ -22,6 +22,7 @@ import com.doris.nflow.engine.util.StrongUuidGenerator;
 import com.doris.nflow.engine.validator.BaseNodeValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -48,7 +49,7 @@ public class DefinitionProcessor {
 
     private final BaseNodeValidator baseNodeValidator;
 
-    public DefinitionProcessor(FlowDefinitionService flowDefinitionService, FlowDeploymentService flowDeploymentService, BaseNodeValidator baseNodeValidator) {
+    public DefinitionProcessor( FlowDefinitionService flowDefinitionService, FlowDeploymentService flowDeploymentService, BaseNodeValidator baseNodeValidator) {
         this.flowDefinitionService = flowDefinitionService;
         this.flowDeploymentService = flowDeploymentService;
         this.baseNodeValidator = baseNodeValidator;
@@ -168,6 +169,7 @@ public class DefinitionProcessor {
             flowDeployment.setFlowDeployCode(flowDeployCode);
             flowDeployment.setStatus(FlowDeploymentStatus.DEPLOYED.getCode());
             result = flowDeploymentService.save(flowDeployment);
+            deployFlowResult.setFlowDeployCode(flowDeployCode);
         } catch (ParamException e) {
             log.error("发布流程出现异常：", e);
             deployFlowResult.setErrorCode(e.getErrorCode());

@@ -24,6 +24,7 @@ import com.doris.nflow.engine.util.InstanceDataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -41,6 +42,7 @@ import java.util.Optional;
 @Component
 @Slf4j
 @Validated
+@Transactional
 public class RuntimeProcessor {
 
     private final FlowDeploymentService flowDeploymentService;

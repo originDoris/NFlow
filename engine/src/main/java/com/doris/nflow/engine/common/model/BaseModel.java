@@ -20,7 +20,7 @@ public class BaseModel implements Serializable {
     public static final String MODIFY_TIME = "modifyTime";
 
     @TableId(type = IdType.AUTO)
-    protected Long id;
+    protected Integer id;
 
     /**
      * 创建时间

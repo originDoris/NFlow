@@ -1,5 +1,6 @@
 package com.doris.nflow.engine.util;
 
+import com.doris.nflow.engine.common.constant.ExpressionTypeConstant;
 import com.doris.nflow.engine.common.constant.NodePropertyConstant;
 import com.doris.nflow.engine.common.enumerate.NodeType;
 import com.doris.nflow.engine.common.model.node.BaseNode;
@@ -41,9 +42,9 @@ public class BaseNodeUtil {
     public static String getConditionType(BaseNode baseNode){
         Map<String, Object> properties = baseNode.getProperties();
         if (MapUtils.isEmpty(properties)) {
-            return null;
+            return ExpressionTypeConstant.GROOVY;
         }
-        return (String) properties.get(NodePropertyConstant.CONDITION_TYPE);
+        return properties.get(NodePropertyConstant.CONDITION_TYPE) == null ? ExpressionTypeConstant.GROOVY : (String) properties.get(NodePropertyConstant.CONDITION_TYPE);
     }
 
     public static BaseNode getStartNode(Map<String, BaseNode> baseNodeMap){

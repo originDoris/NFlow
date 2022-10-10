@@ -1,6 +1,5 @@
 package com.doris.nflow.engine.flow.definition.enumerate;
 
-import com.baomidou.mybatisplus.annotation.IEnum;
 
 /**
  * @author: origindoris
