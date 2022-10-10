@@ -13,11 +13,21 @@ import java.util.Map;
 public interface ExpressionCalculator {
 
     /**
-     * 计算器
+     * 流程脚本计算器，用于执行流程中的简单表达式
      * @param expression 表达式
      * @param dataMap 参数
-     * @return
+     * @return true / false
      * @throws ProcessException
      */
     Boolean calculate(String expression, Map<String, Object> dataMap) throws ProcessException;
+
+
+    /**
+     * 执行脚本，用于脚本任务
+     * @param script 脚本
+     * @param dataMap 参数
+     * @return key：value map
+     * @throws ProcessException
+     */
+    Map<String, Object> executorScript(String script, Map<String, Object> dataMap) throws ProcessException;
 }

@@ -31,6 +31,25 @@ public class InstanceDataUtil {
     }
 
 
+    public static Map<String,InstanceData> parseDataMap2InstanceData(Map<String, Object> dataMap){
+        if (MapUtils.isEmpty(dataMap)) {
+            return new HashMap<>(1);
+        }
+        HashMap<String, InstanceData> result = new HashMap<>();
+
+        for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            InstanceData instanceData = new InstanceData();
+            instanceData.setValue(value);
+            instanceData.setKey(key);
+            // todo 类型推断
+            instanceData.setType("object");
+            result.put(key, instanceData);
+        }
+        return result;
+    }
+
     public static List<InstanceData> getInstanceDataList(Map<String, InstanceData> instanceDataMap){
         return new ArrayList<>(instanceDataMap.values());
     }

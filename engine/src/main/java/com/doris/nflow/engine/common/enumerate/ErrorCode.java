@@ -47,8 +47,12 @@ public enum ErrorCode {
     ROLLBACK_FAILED(3012, "Rollback task failed"),
     GET_FLOW_DEPLOYMENT_FAILED(3013, "Get flowDeployment failed"),
     GET_FLOW_INSTANCE_FAILED(3014, "Get flowInstance failed"),
+    GET_NODE_INSTANCE_DATA_FAILED(3014, "Get flowInstance data failed"),
+    MODIFY_NODE_INSTANCE_DATA_FAILED(3014, "Modify flowInstance data failed"),
     COMMIT_REJECTRD(3015, "Commit rejected, flow is terminate"),
     ROLLBACK_REJECTRD(3016, "Rollback rejected, non-running flowInstance to rollback"),
+
+    GET_SCRIPT_CALCULATOR_IS_NULL(3017, "Get script calculator is null"),
 
     /**
      * 4000 ~ 4999 操作权限异常
