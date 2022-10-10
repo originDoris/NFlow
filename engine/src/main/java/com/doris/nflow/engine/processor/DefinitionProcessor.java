@@ -170,6 +170,7 @@ public class DefinitionProcessor {
             flowDeployment.setStatus(FlowDeploymentStatus.DEPLOYED.getCode());
             result = flowDeploymentService.save(flowDeployment);
             deployFlowResult.setFlowDeployCode(flowDeployCode);
+            deployFlowResult.setFlowModuleCode(flowDeployment.getFlowModuleCode());
         } catch (ParamException e) {
             log.error("发布流程出现异常：", e);
             deployFlowResult.setErrorCode(e.getErrorCode());

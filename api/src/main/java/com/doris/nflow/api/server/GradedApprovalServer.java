@@ -14,7 +14,6 @@ import com.doris.nflow.engine.processor.model.result.DeployFlowResult;
 import com.doris.nflow.engine.processor.model.result.StartProcessorResult;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,21 +26,25 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class GradedApprovalServer {
 
-    @Autowired
-    private DefinitionProcessor definitionProcessor;
 
-    @Autowired
-    private RuntimeProcessor runtimeProcessor;
+    private final DefinitionProcessor definitionProcessor;
 
-    public void run(){
+    private final RuntimeProcessor runtimeProcessor;
+
+    public GradedApprovalServer(DefinitionProcessor definitionProcessor, RuntimeProcessor runtimeProcessor) {
+        this.definitionProcessor = definitionProcessor;
+        this.runtimeProcessor = runtimeProcessor;
+    }
+
+
+    public CommitTaskResult run(){
         CreateFlowResult createFlowResult = addFlow();
 
         DeployFlowResult deployFlowResult = deployFlow(createFlowResult.getFlowModuleCode());
 
         StartProcessorResult startProcessorResult = startProcessTest(deployFlowResult.getFlowDeployCode(), deployFlowResult.getFlowModuleCode());
 
-        CommitTaskResult commitTaskResult = commitProcess(startProcessorResult.getFlowInstanceCode(), startProcessorResult.getActiveTaskInstance().getNodeInstanceCode());
-        System.out.println("commitTaskResult = " + commitTaskResult);
+        return commitProcess(startProcessorResult.getFlowInstanceCode(), startProcessorResult.getActiveTaskInstance().getNodeInstanceCode());
     }
 
 
