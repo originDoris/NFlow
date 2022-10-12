@@ -17,8 +17,8 @@
 
 
 # 开源流程引擎对比
+![image](https://user-images.githubusercontent.com/34082657/194832577-55045357-56d7-4f4e-adc8-23d4a1fabe6c.png)
 
-![image-20221010165411939](/Users/origindoris/Library/Application Support/typora-user-images/image-20221010165411939.png)
 
 既然**NFlow**借鉴了**Turbo**的设计方式，所以目前特性都相同，但是NFlow支持的能力会更多，之后NFlow会根据实践中涉及到的场景迭代，更注重如何简化使用成本，支持更多不同节点类型。
 
