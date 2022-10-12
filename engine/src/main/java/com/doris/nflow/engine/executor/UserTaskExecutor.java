@@ -52,7 +52,7 @@ public class UserTaskExecutor extends RuntimeExecutor {
         BaseNode baseNode = runtimeContext.getCurrentNodeModel();
         String nodeName = baseNode.getName();
         String nodeCode = baseNode.getCode();
-        log.info("doExecute: userTask to commit.||flowInstanceId={}||nodeInstanceId={}||nodeKey={}||nodeName={}",
+        log.info("doExecute: userTask to commit.||flowInstanceCode={}||nodeInstanceCode={}||nodeCode={}||nodeName={}",
                 runtimeContext.getFlowInstanceCode(), currentNodeInstance.getNodeInstanceCode(), nodeCode, nodeName);
         throw new SuspendException(ErrorCode.COMMIT_SUSPEND, MessageFormat.format(FlowErrorMessageConstant.NODE_INSTANCE_FORMAT,
                 nodeCode, nodeName, currentNodeInstance.getNodeInstanceCode()));
@@ -98,7 +98,7 @@ public class UserTaskExecutor extends RuntimeExecutor {
 
         //reentrant: completed
         if (Objects.equals(status, NodeInstanceStatus.SUCCESS.getCode())) {
-            log.warn("preCommit: userTask is completed.||flowInstanceId={}||nodeInstanceId={}||nodeKey={}",
+            log.warn("preCommit: userTask is completed.||flowInstanceCode={}||nodeInstanceCode={}||nodeCode={}",
                     flowInstanceCode, nodeInstanceCode, nodeCode);
             return;
         }

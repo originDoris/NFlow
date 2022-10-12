@@ -144,7 +144,7 @@ public class RuntimeProcessor {
         try {
             Optional<FlowInstance> flowInstanceOptional = flowInstanceService.detail(commitTaskParam.getFlowInstanceCode());
             if (flowInstanceOptional.isEmpty()) {
-                log.warn("commit failed: cannot find flowInstanceBO.||flowInstanceCode={}", commitTaskParam.getFlowInstanceCode());
+                log.warn("commit failed: cannot find flowInstance.||flowInstanceCode={}", commitTaskParam.getFlowInstanceCode());
                 throw new ProcessException(ErrorCode.GET_FLOW_INSTANCE_FAILED);
             }
             FlowInstance flowInstance = flowInstanceOptional.get();

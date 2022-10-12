@@ -168,7 +168,7 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
 
     protected void preCommit(RuntimeContext runtimeContext) throws ProcessException {
-        log.warn("preCommit: unsupported element type.||flowInstanceId={}||elementType={}",
+        log.warn("preCommit: unsupported element type.||flowInstanceCode={}||elementType={}",
                 runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getType());
         throw new ProcessException(ErrorCode.UNSUPPORTED_ELEMENT_TYPE);
     }
@@ -207,7 +207,7 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
             Optional<NodeInstance> nodeInstanceDetail = nodeInstanceService.detail(nodeInstanceCode);
             if (nodeInstanceDetail.isEmpty()) {
                 log.warn("preRollback failed: cannot find currentNodeInstancePO from db."
-                        + "||flowInstanceId={}||nodeInstanceId={}", flowInstanceCode, nodeInstanceCode);
+                        + "||flowInstanceCode={}||nodeInstanceCode={}", flowInstanceCode, nodeInstanceCode);
                 throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_FAILED);
             }
             currentNodeInstance = new NodeInstance();
@@ -228,10 +228,10 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
         nodeCode = currentNodeInstance.getNodeCode();
         String status = currentNodeInstance.getStatus();
         if (Objects.equals(status, NodeInstanceStatus.REVOKE.getCode())) {
-            log.warn("preRollback: reentrant process.||flowInstanceId={}||nodeInstance={}||nodeKey={}", flowInstanceCode, nodeInstanceCode, nodeCode);
+            log.warn("preRollback: reentrant process.||flowInstanceCode={}||nodeInstance={}||nodeCode={}", flowInstanceCode, nodeInstanceCode, nodeCode);
             throw new ReentrantException(ErrorCode.REENTRANT_WARNING);
         }
-        log.info("preRollback done.||flowInstanceId={}||nodeInstance={}||nodeKey={}", flowInstanceCode, nodeInstanceCode, nodeCode);
+        log.info("preRollback done.||flowInstanceCode={}||nodeInstance={}||nodeCode={}", flowInstanceCode, nodeInstanceCode, nodeCode);
     }
 
     /**
@@ -268,7 +268,7 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
         String sourceNodeInstanceCode = currentNodeInstance.getSourceNodeInstanceCode();
         if (StringUtils.isBlank(sourceNodeInstanceCode)) {
             log.warn("getRollbackExecutor: there's no sourceNodeInstance(startEvent)."
-                    + "||flowInstanceId={}||nodeInstanceId={}", flowInstanceId, currentNodeInstance.getFlowDeployCode());
+                    + "||flowInstanceCode={}||nodeInstanceCode={}", flowInstanceId, currentNodeInstance.getFlowDeployCode());
             return null;
         }
 

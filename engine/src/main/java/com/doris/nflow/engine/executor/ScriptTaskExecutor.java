@@ -15,6 +15,7 @@ import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
 import com.doris.nflow.engine.script.ExpressionCalculator;
 import com.doris.nflow.engine.util.InstanceDataUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -31,19 +32,24 @@ import static com.doris.nflow.engine.common.constant.NodeTypeConstant.SCRIPT_TAS
  */
 @Component(SCRIPT_TASK_NODE)
 @Slf4j
-public class ScriptExecutor extends RuntimeExecutor{
+public class ScriptTaskExecutor extends RuntimeExecutor{
 
-    protected ScriptExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
+    protected ScriptTaskExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
         super(nodeInstanceService, executorContext, expressionCalculatorContext, nodeInstanceDataService);
     }
 
     @Override
     protected void doExecute(RuntimeContext runtimeContext) throws ProcessException {
         ScriptTask scriptTask = (ScriptTask) runtimeContext.getCurrentNodeModel();
+        if (StringUtils.isBlank(scriptTask.getScript())) {
+            log.info("脚本任务节点脚本为空！runtimeContext:{}", runtimeContext);
+            return;
+        }
+
         String type = scriptTask.getType();
         ExpressionCalculator expressionCalculator = expressionCalculatorContext.getExpressionCalculator(type);
         if (expressionCalculator == null){
-            log.info("获取脚本解析器失败！|| runtimeContext:{}", runtimeContext);
+            log.error("获取脚本解析器失败！|| runtimeContext:{}", runtimeContext);
             throw new ProcessException(ErrorCode.GET_SCRIPT_CALCULATOR_IS_NULL);
         }
         Map<String, InstanceData> instanceDataMap = runtimeContext.getInstanceDataMap();

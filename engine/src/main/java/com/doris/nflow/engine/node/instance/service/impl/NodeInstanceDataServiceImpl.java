@@ -80,6 +80,7 @@ public class NodeInstanceDataServiceImpl implements NodeInstanceDataService {
 
     @Override
     public Optional<NodeInstanceData> detailByFlowInstanceCodeAndInstanceDataCode(String flowInstanceCode, String nodeInstanceDataCode) {
-        return null;
+        NodeInstanceData nodeInstanceData = nodeInstanceDataMapper.detailByFlowInstanceCodeAndInstanceDataCode(flowInstanceCode, nodeInstanceDataCode);
+        return Optional.ofNullable(nodeInstanceData);
     }
 }

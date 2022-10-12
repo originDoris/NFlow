@@ -463,8 +463,6 @@ public class FlowExecutor extends BaseNodeExecutor {
 
         NodeInstance activeNodeInstance = null;
         for (NodeInstance nodeInstance : nodeInstanceList) {
-            // TODO: 2020/1/10 the first active or completed node must be UserTask
-            //ignore userTask
             if (!BaseNodeUtil.isElementType(nodeInstance.getNodeCode(), baseNodeMap, NodeType.USER_TASK_NODE)) {
                 log.info("getActiveUserTaskForRollback: ignore un-userTask nodeInstance.||flowInstanceCode={}"
                         + "||suspendNodeInstanceCode={}||nodeCode={}", flowInstanceCode, suspendNodeInstanceCode, nodeInstance.getNodeCode());
