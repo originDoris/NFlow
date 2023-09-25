@@ -9,7 +9,7 @@ import com.doris.nflow.engine.flow.instance.model.FlowInstanceQuery;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: FlowDefinitionMapper
  * @Description:
  * @date: 2022/9/30 08:56

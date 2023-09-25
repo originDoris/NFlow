@@ -1,6 +1,7 @@
 package com.doris.nflow.test.flow;
 
 import com.doris.nflow.api.ApiApplication;
+import com.doris.nflow.engine.common.constant.ExpressionTypeConstant;
 import com.doris.nflow.engine.common.constant.NodePropertyConstant;
 import com.doris.nflow.engine.common.enumerate.NodeType;
 import com.doris.nflow.engine.common.model.node.BaseNode;
@@ -8,7 +9,10 @@ import com.doris.nflow.engine.common.model.node.event.EndEvent;
 import com.doris.nflow.engine.common.model.node.event.StartEvent;
 import com.doris.nflow.engine.common.model.node.flow.SequenceFlow;
 import com.doris.nflow.engine.common.model.node.gateway.GatewayNode;
+import com.doris.nflow.engine.common.model.node.task.ScriptTask;
+import com.doris.nflow.engine.common.model.node.task.ServiceTask;
 import com.doris.nflow.engine.common.model.node.task.UserTask;
+import com.doris.nflow.engine.executor.enumerate.HttpMethodType;
 import com.doris.nflow.engine.processor.DefinitionProcessor;
 import com.doris.nflow.engine.processor.model.param.CreateFlowParam;
 import com.doris.nflow.engine.processor.model.param.DeployFlowParam;
@@ -26,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: com.doris.nflow.test.flow.FlowTest
  * @Description:
  * @date: 2022/10/9 14:49
@@ -47,6 +51,98 @@ public class FlowTest {
         CreateFlowResult createFlowResult = definitionProcessor.create(createFlowParam);
         System.out.println("createFlowResult = " + createFlowResult);
     }
+
+    /**
+     * 服务编排的流程
+     */
+    @Test
+    public void serviceFlow(){
+        CreateFlowParam createFlowParam = new CreateFlowParam();
+        createFlowParam.setFlowName("服务编排流程");
+        createFlowParam.setFlowModule(getServiceFlowModule());
+        CreateFlowResult createFlowResult = definitionProcessor.create(createFlowParam);
+        System.out.println("createFlowResult = " + createFlowResult);
+    }
+//1f0c8cae-5b63-11ee-9260-a210dca18963
+//b906b053-5b62-11ee-8015-a210dca18963
+    @Test
+    public void deployServiceFlow(){
+        DeployFlowParam deployFlowParam = new DeployFlowParam();
+        deployFlowParam.setFlowModuleCode("1f0c8cae-5b63-11ee-9260-a210dca18963");
+        DeployFlowResult deploy = definitionProcessor.deploy(deployFlowParam);
+        System.out.println("deploy = " + deploy);
+    }
+
+
+
+    private List<BaseNode> getServiceFlowModule(){
+        List<BaseNode> baseNodes = new ArrayList<>();
+        StartEvent startEvent = new StartEvent();
+        startEvent.setCode("start");
+        startEvent.setName("开始事件");
+        startEvent.setType(NodeType.START_EVENT_NODE.getCode());
+        startEvent.setOutput(Lists.newArrayList("sequence1"));
+
+        SequenceFlow sequenceFlow = new SequenceFlow();
+        sequenceFlow.setCode("sequence1");
+        sequenceFlow.setName("sequence1");
+        sequenceFlow.setInput(Lists.newArrayList("start"));
+        sequenceFlow.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow.setOutput(Lists.newArrayList("serviceTask"));
+
+        ServiceTask serviceTask = new ServiceTask();
+        serviceTask.setCode("serviceTask");
+        serviceTask.setInput(Lists.newArrayList("sequence1"));
+        serviceTask.setName("获取请求API列表");
+        serviceTask.setType(NodeType.SERVICE_TASK_NODE.getCode());
+        serviceTask.setOutput(Lists.newArrayList("sequence2"));
+        serviceTask.setUrl("http://192.168.1.204:8081/datacube/api/info/list?projectId=0&pageSize=10&pageNo=1");
+        serviceTask.setMethodType(HttpMethodType.GET.getCode());
+
+        SequenceFlow sequenceFlow2 = new SequenceFlow();
+        sequenceFlow2.setCode("sequence2");
+        sequenceFlow2.setName("sequence2");
+        sequenceFlow2.setInput(Lists.newArrayList("serviceTask"));
+        sequenceFlow2.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow2.setOutput(Lists.newArrayList("script"));
+
+
+        ScriptTask scriptTask = new ScriptTask();
+        scriptTask.setCode("script");
+        scriptTask.setName("groovy脚本处理");
+        scriptTask.setType(NodeType.SCRIPT_TASK_NODE.getCode());
+        scriptTask.setScript("def map = new HashMap<String, Object>()\n" +
+                "        map.put(\"size\",new groovy.json.JsonSlurper().parseText(serviceTask.get()).data.list.size())\n" +
+                "        return map");
+        scriptTask.setInput(Lists.newArrayList("sequence2"));
+        scriptTask.setOutput(Lists.newArrayList("sequence3"));
+        scriptTask.setScriptType(ExpressionTypeConstant.GROOVY);
+
+
+        SequenceFlow sequenceFlow3 = new SequenceFlow();
+        sequenceFlow3.setCode("sequence3");
+        sequenceFlow3.setName("sequence3");
+        sequenceFlow3.setInput(Lists.newArrayList("script"));
+        sequenceFlow3.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow3.setOutput(Lists.newArrayList("end"));
+
+        EndEvent endEvent = new EndEvent();
+        endEvent.setCode("end");
+        endEvent.setInput(Lists.newArrayList("sequence2"));
+        endEvent.setType(NodeType.END_EVENT_NODE.getCode());
+        endEvent.setName("结束");
+
+        baseNodes.add(startEvent);
+        baseNodes.add(sequenceFlow);
+        baseNodes.add(serviceTask);
+        baseNodes.add(sequenceFlow2);
+        baseNodes.add(scriptTask);
+        baseNodes.add(sequenceFlow3);
+        baseNodes.add(endEvent);
+        return baseNodes;
+    }
+
+
 
     @Test
     public void deployFlow(){

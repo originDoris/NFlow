@@ -5,7 +5,7 @@ import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: StrongUuidGenerator
  * @Description:
  * @date: 2022/9/30 11:33

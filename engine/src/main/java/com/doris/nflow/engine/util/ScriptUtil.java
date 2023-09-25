@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ScriptUtil
  * @Description:
  * @date: 2022/10/10 14:36

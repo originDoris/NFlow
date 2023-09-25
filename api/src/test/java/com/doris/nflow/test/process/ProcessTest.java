@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.collections.Lists;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ProcessTest
  * @Description:
  * @date: 2022/10/10 10:21
@@ -31,8 +31,8 @@ public class ProcessTest {
     @Test
     public void startProcessTest(){
         StartProcessorParam startProcessorParam = new StartProcessorParam();
-        startProcessorParam.setFlowDeployCode("34ca2e55-4842-11ed-9748-3e7b4863f9dc");
-        startProcessorParam.setFlowModuleCode("b01f6e55-4840-11ed-8851-c69bf65f9b74");
+        startProcessorParam.setFlowDeployCode("29a0fc26-5b63-11ee-b22e-a210dca18963");
+        startProcessorParam.setFlowModuleCode("1f0c8cae-5b63-11ee-9260-a210dca18963");
 
 
         StartProcessorResult startProcessorResult = runtimeProcessor.startProcess(startProcessorParam);

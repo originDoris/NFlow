@@ -1,7 +1,7 @@
 package com.doris.nflow.engine.common.constant;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: NodeTypeConstant
  * @Description: 表达式解析器
  * @date: 2022/10/1 07:13

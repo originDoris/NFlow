@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: CreateFlowParam
  * @Description:
  * @date: 2022/10/8 10:06
@@ -24,6 +24,7 @@ public class CreateFlowParam extends CommonParam {
      */
     @NotEmpty(message = "流程定义模块不能为空！")
     private List<BaseNode> flowModule;
+
 
     private String remark;
 

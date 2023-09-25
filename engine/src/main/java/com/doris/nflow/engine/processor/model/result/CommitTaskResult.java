@@ -3,7 +3,7 @@ package com.doris.nflow.engine.processor.model.result;
 import lombok.Data;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: CommitTaskResult
  * @Description:
  * @date: 2022/10/9 10:59

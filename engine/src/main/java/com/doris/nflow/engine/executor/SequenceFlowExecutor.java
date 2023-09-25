@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: SequenceFlowExecutor
  * @Description:
  * @date: 2022/10/2 18:48

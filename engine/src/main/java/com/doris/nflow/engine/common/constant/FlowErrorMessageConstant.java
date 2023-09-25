@@ -1,7 +1,7 @@
 package com.doris.nflow.engine.common.constant;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: NodeErrorMessageConstant
  * @Description: 流程异常信息常量
  * @date: 2022/10/1 08:58

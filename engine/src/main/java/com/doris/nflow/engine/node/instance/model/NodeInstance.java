@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Map;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: NodeInstance
  * @Description: 节点实例
  * @date: 2022/10/1 12:20

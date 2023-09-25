@@ -1,7 +1,7 @@
 package com.doris.nflow.engine.common.constant;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: NodeTypeConstant
  * @Description: 节点类型枚举
  * @date: 2022/10/1 07:13
@@ -14,4 +14,6 @@ public class NodeTypeConstant {
     public static final String SCRIPT_TASK_NODE = "script";
     public static final String EXCLUSIVE_GATEWAY_NODE = "exclusiveGateway";
     public static final String SEQUENCE_FLOW_NODE = "sequence";
+
+    public static final String HTTP_TASK_NODE = "http";
 }

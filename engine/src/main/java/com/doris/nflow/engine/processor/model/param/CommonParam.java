@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: CommonParam
  * @Description:
  * @date: 2022/10/8 10:01

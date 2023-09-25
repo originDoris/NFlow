@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ExclusiveGatewayExecutor
  * @Description:
  * @date: 2022/10/1 09:23

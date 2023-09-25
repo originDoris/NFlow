@@ -1,7 +1,7 @@
 package com.doris.nflow.engine.common.enumerate;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ProcessStatus
  * @Description:
  * @date: 2022/10/8 15:23

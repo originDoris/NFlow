@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: BaseQuery
  * @Description:
  * @date: 2022/9/30 11:00

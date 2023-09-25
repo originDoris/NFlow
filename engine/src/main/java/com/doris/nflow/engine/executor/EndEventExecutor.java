@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: EndEventExecutor
  * @Description:
  * @date: 2022/10/1 09:23
@@ -50,6 +50,16 @@ public class EndEventExecutor extends RuntimeExecutor {
         currentNodeInstance.setInstanceDataCode(runtimeContext.getInstanceDataCode());
         currentNodeInstance.setStatus(NodeInstanceStatus.SUCCESS.getCode());
         runtimeContext.getNodeInstanceList().add(currentNodeInstance);
+    }
+    @Override
+    protected void postRollback(RuntimeContext runtimeContext) throws ProcessException {
+        //do nothing
+    }
+
+    @Override
+    protected RuntimeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException {
+        log.info("getExecuteExecutor: no executor after EndEvent.");
+        return null;
     }
 
     @Override

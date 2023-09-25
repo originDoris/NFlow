@@ -1,5 +1,6 @@
 package com.doris.nflow.api.util;
 
+import com.doris.nflow.engine.common.constant.ExpressionTypeConstant;
 import com.doris.nflow.engine.common.constant.NodePropertyConstant;
 import com.doris.nflow.engine.common.enumerate.NodeType;
 import com.doris.nflow.engine.common.model.node.BaseNode;
@@ -7,7 +8,10 @@ import com.doris.nflow.engine.common.model.node.event.EndEvent;
 import com.doris.nflow.engine.common.model.node.event.StartEvent;
 import com.doris.nflow.engine.common.model.node.flow.SequenceFlow;
 import com.doris.nflow.engine.common.model.node.gateway.GatewayNode;
+import com.doris.nflow.engine.common.model.node.task.ScriptTask;
+import com.doris.nflow.engine.common.model.node.task.ServiceTask;
 import com.doris.nflow.engine.common.model.node.task.UserTask;
+import com.doris.nflow.engine.executor.enumerate.HttpMethodType;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
@@ -15,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: BuildModuleUtil
  * @Description:
  * @date: 2022/10/10 16:01
@@ -126,6 +130,74 @@ public class BuildModuleUtil {
         baseNodes.add(userTask3);
         baseNodes.add(sequenceFlow5);
         baseNodes.add(sequenceFlow6);
+        baseNodes.add(endEvent);
+        return baseNodes;
+    }
+
+
+    public static List<BaseNode> getServiceFlowModule(){
+        List<BaseNode> baseNodes = new ArrayList<>();
+        StartEvent startEvent = new StartEvent();
+        startEvent.setCode("start");
+        startEvent.setName("开始事件");
+        startEvent.setType(NodeType.START_EVENT_NODE.getCode());
+        startEvent.setOutput(Lists.newArrayList("sequence1"));
+
+        SequenceFlow sequenceFlow = new SequenceFlow();
+        sequenceFlow.setCode("sequence1");
+        sequenceFlow.setName("sequence1");
+        sequenceFlow.setInput(Lists.newArrayList("start"));
+        sequenceFlow.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow.setOutput(Lists.newArrayList("serviceTask"));
+
+        ServiceTask serviceTask = new ServiceTask();
+        serviceTask.setCode("serviceTask");
+        serviceTask.setInput(Lists.newArrayList("sequence1"));
+        serviceTask.setName("获取请求API列表");
+        serviceTask.setType(NodeType.SERVICE_TASK_NODE.getCode());
+        serviceTask.setOutput(Lists.newArrayList("sequence2"));
+        serviceTask.setUrl("http://192.168.1.204:8081/datacube/api/info/list?projectId=0&pageSize=10&pageNo=1");
+        serviceTask.setMethodType(HttpMethodType.GET.getCode());
+
+        SequenceFlow sequenceFlow2 = new SequenceFlow();
+        sequenceFlow2.setCode("sequence2");
+        sequenceFlow2.setName("sequence2");
+        sequenceFlow2.setInput(Lists.newArrayList("serviceTask"));
+        sequenceFlow2.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow2.setOutput(Lists.newArrayList("script"));
+
+
+        ScriptTask scriptTask = new ScriptTask();
+        scriptTask.setCode("script");
+        scriptTask.setName("groovy脚本处理");
+        scriptTask.setType(NodeType.SCRIPT_TASK_NODE.getCode());
+        scriptTask.setScript("def map = new HashMap<String, Object>()\n" +
+                "        map.put(\"size\",new groovy.json.JsonSlurper().parseText(serviceTask.get()).data.list.size())\n" +
+                "        return map");
+        scriptTask.setInput(Lists.newArrayList("sequence2"));
+        scriptTask.setOutput(Lists.newArrayList("sequence3"));
+        scriptTask.setScriptType(ExpressionTypeConstant.GROOVY);
+
+
+        SequenceFlow sequenceFlow3 = new SequenceFlow();
+        sequenceFlow3.setCode("sequence3");
+        sequenceFlow3.setName("sequence3");
+        sequenceFlow3.setInput(Lists.newArrayList("script"));
+        sequenceFlow3.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow3.setOutput(Lists.newArrayList("end"));
+
+        EndEvent endEvent = new EndEvent();
+        endEvent.setCode("end");
+        endEvent.setInput(Lists.newArrayList("sequence2"));
+        endEvent.setType(NodeType.END_EVENT_NODE.getCode());
+        endEvent.setName("结束");
+
+        baseNodes.add(startEvent);
+        baseNodes.add(sequenceFlow);
+        baseNodes.add(serviceTask);
+        baseNodes.add(sequenceFlow2);
+        baseNodes.add(scriptTask);
+        baseNodes.add(sequenceFlow3);
         baseNodes.add(endEvent);
         return baseNodes;
     }

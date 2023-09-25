@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ApiApplication
  * @Description:
  * @date: 2022/9/29 17:22

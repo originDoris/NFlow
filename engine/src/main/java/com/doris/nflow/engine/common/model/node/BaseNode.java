@@ -1,13 +1,17 @@
 package com.doris.nflow.engine.common.model.node;
 
+import com.alibaba.fastjson2.annotation.JSONType;
+import com.doris.nflow.engine.common.model.node.task.ScriptTask;
+import com.doris.nflow.engine.common.model.node.task.ServiceTask;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: FlowNode
  * @Description:
  * @date: 2022/9/29 13:55
@@ -45,5 +49,5 @@ public class BaseNode implements Serializable {
     /**
      * 节点属性
      */
-    private Map<String, Object> properties;
+    private Map<String, Object> properties = new HashMap<>();
 }

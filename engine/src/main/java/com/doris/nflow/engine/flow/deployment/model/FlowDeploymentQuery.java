@@ -4,7 +4,7 @@ import com.doris.nflow.engine.common.model.BaseQuery;
 import lombok.Data;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: FlowDeploymentQuery
  * @Description:
  * @date: 2022/10/1 10:26

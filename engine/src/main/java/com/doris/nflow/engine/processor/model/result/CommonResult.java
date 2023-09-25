@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: CommonResult
  * @Description:
  * @date: 2022/10/8 09:59

@@ -1,7 +1,7 @@
 package com.doris.nflow.engine.node.instance.enumerate;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: NodeInstanceLogType
  * @Description: 流程实例状态
  * @date: 2022/10/1 12:31

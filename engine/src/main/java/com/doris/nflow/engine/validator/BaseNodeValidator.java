@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: BaseNodeValidator
  * @Description: 流程节点参数验证器
  * @date: 2022/10/1 07:09

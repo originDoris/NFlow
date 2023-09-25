@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: BaseNodeUtil
  * @Description:
  * @date: 2022/10/3 10:50
@@ -49,6 +49,10 @@ public class GroovyUtil {
             throw new ProcessException(ErrorCode.MISSING_DATA.getCode(), mpe.getMessage());
         }
     }
+//    Script script = InvokerHelper.createScript(new GroovyShell(binding).parse("return serviceTask.data.list.size").getClass(),binding);
+//script.run();
+//
+
 
     private static Script createScript(String groovyExpression, Binding binding) {
         Script script;

@@ -2,7 +2,7 @@ package com.doris.nflow.engine.flow.definition.enumerate;
 
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: FlowDefinitionStatus
  * @Description: 流程定义状态
  * @date: 2022/9/29 16:08

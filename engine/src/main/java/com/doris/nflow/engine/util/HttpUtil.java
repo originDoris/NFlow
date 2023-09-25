@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: HttpUtil
  * @Description:
  * @date: 2022/10/11 14:27
@@ -65,6 +65,11 @@ public class HttpUtil {
         URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(),
                 oldUri.getPath(), newQuery, oldUri.getFragment());
         return newUri.toString();
+    }
+
+    public static void main(String[] args) throws URISyntaxException {
+        URI oldUri = new URI("http://192.168.1.204:8081/datacube/api/info/list?projectId=0&pageSize=10&pageNo=1");
+        System.out.println("oldUri = " + oldUri);
     }
 
 }

@@ -3,7 +3,7 @@ package com.doris.nflow.engine.common.exception;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ReentrantException
  * @Description: 重入异常
  * @date: 2022/10/2 08:45

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: FlowInfo
  * @Description:
  * @date: 2022/10/9 10:07

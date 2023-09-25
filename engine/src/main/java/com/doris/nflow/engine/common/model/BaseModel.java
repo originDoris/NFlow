@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: BaseModel
  * @Description:
  * @date: 2022/9/29 10:40

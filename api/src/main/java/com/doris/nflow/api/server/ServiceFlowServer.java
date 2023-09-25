@@ -2,9 +2,9 @@ package com.doris.nflow.api.server;
 
 import com.doris.nflow.api.util.BuildModuleUtil;
 import com.doris.nflow.engine.node.instance.model.InstanceData;
+import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.processor.DefinitionProcessor;
 import com.doris.nflow.engine.processor.RuntimeProcessor;
-import com.doris.nflow.engine.processor.model.param.CommitTaskParam;
 import com.doris.nflow.engine.processor.model.param.CreateFlowParam;
 import com.doris.nflow.engine.processor.model.param.DeployFlowParam;
 import com.doris.nflow.engine.processor.model.param.StartProcessorParam;
@@ -12,9 +12,10 @@ import com.doris.nflow.engine.processor.model.result.CommitTaskResult;
 import com.doris.nflow.engine.processor.model.result.CreateFlowResult;
 import com.doris.nflow.engine.processor.model.result.DeployFlowResult;
 import com.doris.nflow.engine.processor.model.result.StartProcessorResult;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author: xhz
@@ -24,36 +25,52 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class GradedApprovalServer {
+public class ServiceFlowServer {
 
 
     private final DefinitionProcessor definitionProcessor;
 
     private final RuntimeProcessor runtimeProcessor;
 
-    public GradedApprovalServer(DefinitionProcessor definitionProcessor, RuntimeProcessor runtimeProcessor) {
+    protected final NodeInstanceDataService nodeInstanceDataService;
+
+    public ServiceFlowServer(DefinitionProcessor definitionProcessor, RuntimeProcessor runtimeProcessor, NodeInstanceDataService nodeInstanceDataService) {
         this.definitionProcessor = definitionProcessor;
         this.runtimeProcessor = runtimeProcessor;
+        this.nodeInstanceDataService = nodeInstanceDataService;
     }
 
 
-    public CommitTaskResult run(){
+    public List<InstanceData> run(){
         CreateFlowResult createFlowResult = addFlow();
 
         DeployFlowResult deployFlowResult = deployFlow(createFlowResult.getFlowModuleCode());
 
         StartProcessorResult startProcessorResult = startProcessTest(deployFlowResult.getFlowDeployCode(), deployFlowResult.getFlowModuleCode());
 
-        return commitProcess(startProcessorResult.getFlowInstanceCode(), startProcessorResult.getActiveTaskInstance().getNodeInstanceCode());
+        return startProcessorResult.getParams();
+    }
+
+
+    public DeployFlowResult addFlow(CreateFlowParam createFlowParam){
+        CreateFlowResult createFlowResult = definitionProcessor.create(createFlowParam);
+        DeployFlowParam deployFlowParam = new DeployFlowParam();
+        deployFlowParam.setFlowModuleCode(createFlowResult.getFlowModuleCode());
+        return definitionProcessor.deploy(deployFlowParam);
     }
 
 
 
+    public List<InstanceData> run(String flowDeployCode,String flowModuleCode){
+        StartProcessorResult startProcessorResult = startProcessTest(flowDeployCode, flowModuleCode);
+        return startProcessorResult.getParams();
+    }
+
     private CreateFlowResult addFlow(){
 
         CreateFlowParam createFlowParam = new CreateFlowParam();
-        createFlowParam.setFlowName("请假流程");
-        createFlowParam.setFlowModule(BuildModuleUtil.getGradedApproval());
+        createFlowParam.setFlowName("服务编排");
+        createFlowParam.setFlowModule(BuildModuleUtil.getServiceFlowModule());
         return definitionProcessor.create(createFlowParam);
     }
 
@@ -70,16 +87,4 @@ public class GradedApprovalServer {
         return runtimeProcessor.startProcess(startProcessorParam);
     }
 
-
-    private CommitTaskResult commitProcess(String flowInstanceCode, String nodeInstanceCode) {
-        CommitTaskParam commitTaskParam = new CommitTaskParam();
-        commitTaskParam.setFlowInstanceCode(flowInstanceCode);
-        commitTaskParam.setNodeInstanceCode(nodeInstanceCode);
-        InstanceData instanceData = new InstanceData();
-        instanceData.setType("Integer");
-        instanceData.setKey("day");
-        instanceData.setValue(2);
-        commitTaskParam.setParams(Lists.newArrayList(instanceData));
-        return runtimeProcessor.commit(commitTaskParam);
-    }
 }

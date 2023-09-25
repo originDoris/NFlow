@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: RollbackTaskParam
  * @Description:
  * @date: 2022/10/9 11:35

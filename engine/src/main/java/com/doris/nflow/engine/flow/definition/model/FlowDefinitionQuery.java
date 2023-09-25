@@ -4,7 +4,7 @@ import com.doris.nflow.engine.common.model.BaseQuery;
 import lombok.Data;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: FlowDefinitionQuery
  * @Description: 流程定义参数
  * @date: 2022/9/30 11:08

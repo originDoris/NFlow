@@ -3,6 +3,7 @@ package com.doris.nflow.engine.executor;
 import com.doris.nflow.engine.common.context.ExecutorContext;
 import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
+import com.doris.nflow.engine.common.enumerate.DataType;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.task.ScriptTask;
@@ -25,7 +26,7 @@ import java.util.Optional;
 import static com.doris.nflow.engine.common.constant.NodeTypeConstant.SCRIPT_TASK_NODE;
 
 /**
- * @author: origindoris
+ * @author: xhz
  * @Title: ScriptExecutor
  * @Description:
  * @date: 2022/10/10 14:32
@@ -46,7 +47,7 @@ public class ScriptTaskExecutor extends RuntimeExecutor{
             return;
         }
 
-        String type = scriptTask.getType();
+        String type = scriptTask.getScriptType();
         ExpressionCalculator expressionCalculator = expressionCalculatorContext.getExpressionCalculator(type);
         if (expressionCalculator == null){
             log.error("获取脚本解析器失败！|| runtimeContext:{}", runtimeContext);
@@ -55,7 +56,13 @@ public class ScriptTaskExecutor extends RuntimeExecutor{
         Map<String, InstanceData> instanceDataMap = runtimeContext.getInstanceDataMap();
         Map<String, Object> dataMap = InstanceDataUtil.parseInstanceDataMap(instanceDataMap);
         Map<String, Object> result = expressionCalculator.executorScript(scriptTask.getScript(), dataMap);
-        instanceDataMap.putAll(InstanceDataUtil.parseDataMap2InstanceData(result));
+
+
+        InstanceData instanceData = new InstanceData();
+        instanceData.setKey(scriptTask.getCode());
+        instanceData.setValue(result);
+        instanceData.setType(DataType.STRING.getCode());
+        instanceDataMap.put(scriptTask.getCode(), instanceData);
     }
 
 
