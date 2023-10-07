@@ -80,21 +80,21 @@ public class FlowTest {
         StartEvent startEvent = new StartEvent();
         startEvent.setCode("start");
         startEvent.setName("开始事件");
-        startEvent.setType(NodeType.START_EVENT_NODE.getCode());
+        startEvent.setNodeType(NodeType.START_EVENT_NODE.getCode());
         startEvent.setOutput(Lists.newArrayList("sequence1"));
 
         SequenceFlow sequenceFlow = new SequenceFlow();
         sequenceFlow.setCode("sequence1");
         sequenceFlow.setName("sequence1");
         sequenceFlow.setInput(Lists.newArrayList("start"));
-        sequenceFlow.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow.setOutput(Lists.newArrayList("serviceTask"));
 
         ServiceTask serviceTask = new ServiceTask();
         serviceTask.setCode("serviceTask");
         serviceTask.setInput(Lists.newArrayList("sequence1"));
         serviceTask.setName("获取请求API列表");
-        serviceTask.setType(NodeType.SERVICE_TASK_NODE.getCode());
+        serviceTask.setNodeType(NodeType.SERVICE_TASK_NODE.getCode());
         serviceTask.setOutput(Lists.newArrayList("sequence2"));
         serviceTask.setUrl("http://192.168.1.204:8081/datacube/api/info/list?projectId=0&pageSize=10&pageNo=1");
         serviceTask.setMethodType(HttpMethodType.GET.getCode());
@@ -103,14 +103,14 @@ public class FlowTest {
         sequenceFlow2.setCode("sequence2");
         sequenceFlow2.setName("sequence2");
         sequenceFlow2.setInput(Lists.newArrayList("serviceTask"));
-        sequenceFlow2.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow2.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow2.setOutput(Lists.newArrayList("script"));
 
 
         ScriptTask scriptTask = new ScriptTask();
         scriptTask.setCode("script");
         scriptTask.setName("groovy脚本处理");
-        scriptTask.setType(NodeType.SCRIPT_TASK_NODE.getCode());
+        scriptTask.setNodeType(NodeType.SCRIPT_TASK_NODE.getCode());
         scriptTask.setScript("def map = new HashMap<String, Object>()\n" +
                 "        map.put(\"size\",new groovy.json.JsonSlurper().parseText(serviceTask.get()).data.list.size())\n" +
                 "        return map");
@@ -123,13 +123,13 @@ public class FlowTest {
         sequenceFlow3.setCode("sequence3");
         sequenceFlow3.setName("sequence3");
         sequenceFlow3.setInput(Lists.newArrayList("script"));
-        sequenceFlow3.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow3.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow3.setOutput(Lists.newArrayList("end"));
 
         EndEvent endEvent = new EndEvent();
         endEvent.setCode("end");
         endEvent.setInput(Lists.newArrayList("sequence2"));
-        endEvent.setType(NodeType.END_EVENT_NODE.getCode());
+        endEvent.setNodeType(NodeType.END_EVENT_NODE.getCode());
         endEvent.setName("结束");
 
         baseNodes.add(startEvent);
@@ -157,35 +157,35 @@ public class FlowTest {
         StartEvent startEvent = new StartEvent();
         startEvent.setCode("start");
         startEvent.setName("开始事件");
-        startEvent.setType(NodeType.START_EVENT_NODE.getCode());
+        startEvent.setNodeType(NodeType.START_EVENT_NODE.getCode());
         startEvent.setOutput(Lists.newArrayList("sequence1"));
 
         SequenceFlow sequenceFlow = new SequenceFlow();
         sequenceFlow.setCode("sequence1");
         sequenceFlow.setName("sequence1");
         sequenceFlow.setInput(Lists.newArrayList("start"));
-        sequenceFlow.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow.setOutput(Lists.newArrayList("userTask1"));
 
         UserTask userTask = new UserTask();
         userTask.setCode("userTask1");
         userTask.setInput(Lists.newArrayList("sequence1"));
         userTask.setName("用户提交请假天数");
-        userTask.setType(NodeType.USER_TASK_NODE.getCode());
+        userTask.setNodeType(NodeType.USER_TASK_NODE.getCode());
         userTask.setOutput(Lists.newArrayList("sequence2"));
 
         SequenceFlow sequenceFlow2 = new SequenceFlow();
         sequenceFlow2.setCode("sequence2");
         sequenceFlow2.setName("sequence2");
         sequenceFlow2.setInput(Lists.newArrayList("userTask1"));
-        sequenceFlow2.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow2.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow2.setOutput(Lists.newArrayList("gateway1"));
 
 
         GatewayNode gatewayNode = new GatewayNode();
         gatewayNode.setCode("gateway1");
         gatewayNode.setName("网关");
-        gatewayNode.setType(NodeType.EXCLUSIVE_GATEWAY_NODE.getCode());
+        gatewayNode.setNodeType(NodeType.EXCLUSIVE_GATEWAY_NODE.getCode());
         gatewayNode.setInput(Lists.newArrayList("sequence2"));
         gatewayNode.setOutput(Lists.newArrayList("sequence3","sequence4"));
 
@@ -194,7 +194,7 @@ public class FlowTest {
         sequenceFlow3.setCode("sequence3");
         sequenceFlow3.setName("sequence3");
         sequenceFlow3.setInput(Lists.newArrayList("gateway1"));
-        sequenceFlow3.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow3.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         HashMap<String, Object> sequenceFlow3Param = new HashMap<>();
         sequenceFlow3Param.put(NodePropertyConstant.CONDITION,"day>3");
         sequenceFlow3.setProperties(sequenceFlow3Param);
@@ -204,7 +204,7 @@ public class FlowTest {
         sequenceFlow4.setCode("sequence4");
         sequenceFlow4.setName("sequence4");
         sequenceFlow4.setInput(Lists.newArrayList("gateway1"));
-        sequenceFlow4.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow4.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         HashMap<String, Object> sequenceFlow4Param = new HashMap<>();
         sequenceFlow4Param.put(NodePropertyConstant.CONDITION,"day<3");
         sequenceFlow4.setProperties(sequenceFlow4Param);
@@ -214,14 +214,14 @@ public class FlowTest {
         userTask2.setCode("userTask2");
         userTask2.setInput(Lists.newArrayList("sequence3"));
         userTask2.setName("二级领导审批");
-        userTask2.setType(NodeType.USER_TASK_NODE.getCode());
+        userTask2.setNodeType(NodeType.USER_TASK_NODE.getCode());
         userTask2.setOutput(Lists.newArrayList("sequence5"));
 
         UserTask userTask3 = new UserTask();
         userTask3.setCode("userTask3");
         userTask3.setInput(Lists.newArrayList("sequence4"));
         userTask3.setName("一级领导审批");
-        userTask3.setType(NodeType.USER_TASK_NODE.getCode());
+        userTask3.setNodeType(NodeType.USER_TASK_NODE.getCode());
         userTask3.setOutput(Lists.newArrayList("sequence6"));
 
 
@@ -229,20 +229,20 @@ public class FlowTest {
         sequenceFlow5.setCode("sequence5");
         sequenceFlow5.setName("sequence5");
         sequenceFlow5.setInput(Lists.newArrayList("userTask2"));
-        sequenceFlow5.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow5.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow5.setOutput(Lists.newArrayList("end"));
 
         SequenceFlow sequenceFlow6 = new SequenceFlow();
         sequenceFlow6.setCode("sequence6");
         sequenceFlow6.setName("sequence6");
         sequenceFlow6.setInput(Lists.newArrayList("userTask3"));
-        sequenceFlow6.setType(NodeType.SEQUENCE_FLOW_NODE.getCode());
+        sequenceFlow6.setNodeType(NodeType.SEQUENCE_FLOW_NODE.getCode());
         sequenceFlow6.setOutput(Lists.newArrayList("end"));
 
         EndEvent endEvent = new EndEvent();
         endEvent.setCode("end");
         endEvent.setInput(Lists.newArrayList("sequence5", "sequence6"));
-        endEvent.setType(NodeType.END_EVENT_NODE.getCode());
+        endEvent.setNodeType(NodeType.END_EVENT_NODE.getCode());
         endEvent.setName("结束");
 
         baseNodes.add(startEvent);

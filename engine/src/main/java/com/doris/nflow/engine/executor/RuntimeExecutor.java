@@ -169,7 +169,7 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
     protected void preCommit(RuntimeContext runtimeContext) throws ProcessException {
         log.warn("preCommit: unsupported element type.||flowInstanceCode={}||elementType={}",
-                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getType());
+                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getNodeType());
         throw new ProcessException(ErrorCode.UNSUPPORTED_ELEMENT_TYPE);
     }
 
@@ -285,7 +285,7 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
 
         // TODO: 2019/12/18
         runtimeContext.setCurrentNodeModel(sourceNode);
-        return executorContext.getRuntimeExecutor(sourceNode.getType());
+        return executorContext.getRuntimeExecutor(sourceNode.getNodeType());
     }
 
     @Override
@@ -298,14 +298,14 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
         Map<String, BaseNode> baseNodeMap = runtimeContext.getBaseNodeMap();
         BaseNode baseNode = getUniqueNextNode(runtimeContext.getCurrentNodeModel(), baseNodeMap);
         runtimeContext.setCurrentNodeModel(baseNode);
-        return executorContext.getRuntimeExecutor(baseNode.getType());
+        return executorContext.getRuntimeExecutor(baseNode.getNodeType());
     }
 
     protected BaseNode getUniqueNextNode(BaseNode currentNode, Map<String, BaseNode> baseNodeMap) {
         List<String> output = currentNode.getOutput();
         String nextNodeKey = output.get(0);
         BaseNode baseNode = baseNodeMap.get(nextNodeKey);
-        while (Objects.equals(baseNode.getType(), NodeType.SEQUENCE_FLOW_NODE.getCode())) {
+        while (Objects.equals(baseNode.getNodeType(), NodeType.SEQUENCE_FLOW_NODE.getCode())) {
             baseNode = getUniqueNextNode(baseNode, baseNodeMap);
         }
         return baseNode;
@@ -317,7 +317,7 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
                                          Map<String, InstanceData> instanceDataMap) throws ProcessException {
         BaseNode nextNode = calculateOutgoing(currentBaseNode, baseNodeMap, instanceDataMap);
 
-        while (Objects.equals(nextNode.getType(), NodeType.SEQUENCE_FLOW_NODE.getCode())) {
+        while (Objects.equals(nextNode.getNodeType(), NodeType.SEQUENCE_FLOW_NODE.getCode())) {
             nextNode = getUniqueNextNode(nextNode, baseNodeMap);
         }
         return nextNode;

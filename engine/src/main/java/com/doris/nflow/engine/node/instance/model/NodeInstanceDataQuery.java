@@ -21,4 +21,5 @@ public class NodeInstanceDataQuery extends BaseQuery {
     private String instanceDataCode;
 
     private String type;
+    private String search;
 }

@@ -19,7 +19,7 @@ import java.util.Map;
 @Data
 public class BaseNode implements Serializable {
 
-    public static final String NODE_TYPE = "type";
+    public static final String NODE_TYPE = "nodeType";
 
     /**
      * 节点唯一代码
@@ -34,7 +34,7 @@ public class BaseNode implements Serializable {
     /**
      * 节点类型
      */
-    private String type;
+    private String nodeType;
 
     /**
      * 上游节点

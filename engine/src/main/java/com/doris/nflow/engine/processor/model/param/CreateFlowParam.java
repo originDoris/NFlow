@@ -28,4 +28,6 @@ public class CreateFlowParam extends CommonParam {
 
     private String remark;
 
+    private String content;
+
 }

@@ -7,6 +7,7 @@ import com.doris.nflow.engine.flow.definition.model.FlowDefinitionQuery;
 import com.doris.nflow.engine.flow.deployment.model.FlowDeployment;
 import com.doris.nflow.engine.flow.deployment.model.FlowDeploymentQuery;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author: xhz
@@ -23,6 +24,6 @@ public interface FlowDeploymentMapper extends BaseMapper<FlowDeployment> {
      * @param flowDeploymentQuery 流程部署查询参数
      * @return
      */
-    IPage<FlowDeployment> queryList(IPage<FlowDeployment> page, FlowDeploymentQuery flowDeploymentQuery);
+    IPage<FlowDeployment> queryList(IPage<FlowDeployment> page, @Param("query") FlowDeploymentQuery flowDeploymentQuery);
 
 }

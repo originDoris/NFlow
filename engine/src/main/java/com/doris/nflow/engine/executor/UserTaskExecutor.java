@@ -71,7 +71,7 @@ public class UserTaskExecutor extends RuntimeExecutor {
         }
         log.info("getExecuteExecutor.||nextNode={}||runtimeContext={}", nextNode, runtimeContext);
         runtimeContext.setCurrentNodeModel(nextNode);
-        return executorContext.getRuntimeExecutor(nextNode.getType());
+        return executorContext.getRuntimeExecutor(nextNode.getNodeType());
     }
 
     @Override

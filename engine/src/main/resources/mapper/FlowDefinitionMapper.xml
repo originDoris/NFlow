@@ -13,6 +13,7 @@
         <result column="remark" property="remark"/>
         <result column="flow_name" property="flowName"/>
         <result column="flow_module_code" property="flowModuleCode"/>
+        <result column="content" property="content"/>
         <result column="status" property="status"/>
         <result column="flow_module" property="flowModule" typeHandler="com.doris.nflow.engine.common.handler.BaseNodeHandler"/>
     </resultMap>

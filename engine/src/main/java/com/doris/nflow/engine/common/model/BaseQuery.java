@@ -17,6 +17,4 @@ public class BaseQuery implements Serializable {
 
     private Integer pageNo;
 
-    private String search;
-
 }

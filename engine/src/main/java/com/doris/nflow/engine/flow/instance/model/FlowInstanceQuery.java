@@ -18,4 +18,5 @@ public class FlowInstanceQuery extends BaseQuery {
     private String flowModuleCode;
 
     private String status;
+    private String search;
 }

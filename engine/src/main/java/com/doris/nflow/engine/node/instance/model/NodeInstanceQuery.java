@@ -20,4 +20,6 @@ public class NodeInstanceQuery extends BaseQuery {
     private String nodeInstanceCode;
 
     private String status;
+
+    private String search;
 }

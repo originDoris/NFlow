@@ -51,7 +51,7 @@ public class BaseNodeUtil {
         if (MapUtils.isEmpty(baseNodeMap)) {
             return null;
         }
-        Optional<BaseNode> any = baseNodeMap.values().stream().filter(baseNode -> NodeType.START_EVENT_NODE.getCode().equals(baseNode.getType())).findAny();
+        Optional<BaseNode> any = baseNodeMap.values().stream().filter(baseNode -> NodeType.START_EVENT_NODE.getCode().equals(baseNode.getNodeType())).findAny();
         if (any.isEmpty()) {
             return null;
         }
@@ -85,7 +85,7 @@ public class BaseNodeUtil {
             return false;
         }
         BaseNode baseNode = any.get();
-        return baseNode.getType().equals(nodeType.getCode());
+        return baseNode.getNodeType().equals(nodeType.getCode());
     }
 
 }

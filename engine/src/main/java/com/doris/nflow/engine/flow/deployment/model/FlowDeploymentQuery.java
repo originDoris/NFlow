@@ -16,4 +16,6 @@ public class FlowDeploymentQuery extends BaseQuery {
 
 
     private String status;
+
+    private String search;
 }

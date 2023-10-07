@@ -45,6 +45,8 @@ public class FlowDeployment extends BaseModel {
      */
     private String status;
 
+    private String content;
+
     @TableField(typeHandler = BaseNodeHandler.class)
     @NotEmpty(message = "流程定义模块不能为空！")
     private List<BaseNode> flowModule;

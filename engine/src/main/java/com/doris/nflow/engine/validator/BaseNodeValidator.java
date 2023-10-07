@@ -51,19 +51,19 @@ public class BaseNodeValidator {
                 log.warn(exceptionMsg);
                 throw new DefinitionException(ErrorCode.NODE_KEY_NOT_UNIQUE, exceptionMsg);
             }
-            Assert.notNull(baseNode.getType(),"节点类型不能为空！");
+            Assert.notNull(baseNode.getNodeType(),"节点类型不能为空！");
             baseNodeMap.put(baseNode.getCode(), baseNode);
         }
 
         int startCount = 0;
         int endCount = 0;
         for (BaseNode baseNode : baseNodeMap.values()) {
-            RuntimeExecutor runtimeExecutor = executorContext.getRuntimeExecutor(baseNode.getType());
+            RuntimeExecutor runtimeExecutor = executorContext.getRuntimeExecutor(baseNode.getNodeType());
             runtimeExecutor.valid(baseNode);
-            if (NodeType.START_EVENT_NODE.getCode().equals(baseNode.getType())) {
+            if (NodeType.START_EVENT_NODE.getCode().equals(baseNode.getNodeType())) {
                 startCount++;
             }
-            if (NodeType.END_EVENT_NODE.getCode().equals(baseNode.getType())) {
+            if (NodeType.END_EVENT_NODE.getCode().equals(baseNode.getNodeType())) {
                 endCount++;
             }
         }

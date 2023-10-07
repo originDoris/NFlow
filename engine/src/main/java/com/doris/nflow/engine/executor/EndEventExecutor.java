@@ -67,8 +67,8 @@ public class EndEventExecutor extends RuntimeExecutor {
         BaseNode baseNode = runtimeContext.getCurrentNodeModel();
         String nodeName = baseNode.getName();
         log.warn("doRollback: unsupported element type as EndEvent.||flowInstanceCode={}||nodeKey={}||nodeName={}||nodeType={}",
-                runtimeContext.getFlowInstanceCode(), baseNode.getCode(), nodeName, baseNode.getType());
+                runtimeContext.getFlowInstanceCode(), baseNode.getCode(), nodeName, baseNode.getNodeType());
         throw new ProcessException(ErrorCode.UNSUPPORTED_ELEMENT_TYPE,
-                MessageFormat.format(FlowErrorMessageConstant.NODE_INFO_FORMAT, baseNode.getCode(), nodeName, baseNode.getType()));
+                MessageFormat.format(FlowErrorMessageConstant.NODE_INFO_FORMAT, baseNode.getCode(), nodeName, baseNode.getNodeType()));
     }
 }

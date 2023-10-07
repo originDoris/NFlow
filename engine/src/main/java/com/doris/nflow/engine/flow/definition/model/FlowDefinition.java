@@ -52,5 +52,8 @@ public class FlowDefinition extends BaseModel {
     private String status;
 
 
+    private String content;
+
+
 
 }

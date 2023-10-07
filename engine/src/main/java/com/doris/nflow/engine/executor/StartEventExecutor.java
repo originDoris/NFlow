@@ -56,7 +56,7 @@ public class StartEventExecutor extends RuntimeExecutor {
         runtimeContext.setNodeInstanceList(Collections.emptyList());
 
         log.warn("postRollback: reset runtimeContext.||flowInstanceCode={}||nodeCode={}||nodeType={}",
-                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getCode(), runtimeContext.getCurrentNodeModel().getType());
+                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getCode(), runtimeContext.getCurrentNodeModel().getNodeType());
         throw new ProcessException(ErrorCode.NO_USER_TASK_TO_ROLLBACK, "It's a startEvent.");
     }
 

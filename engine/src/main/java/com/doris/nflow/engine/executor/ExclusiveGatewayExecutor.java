@@ -43,7 +43,7 @@ public class ExclusiveGatewayExecutor extends RuntimeExecutor {
                 runtimeContext.getBaseNodeMap(), runtimeContext.getInstanceDataMap());
 
         runtimeContext.setCurrentNodeModel(nextNode);
-        return executorContext.getRuntimeExecutor(nextNode.getType());
+        return executorContext.getRuntimeExecutor(nextNode.getNodeType());
     }
 
 }

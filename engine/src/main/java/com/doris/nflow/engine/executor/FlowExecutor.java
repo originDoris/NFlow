@@ -542,7 +542,7 @@ public class FlowExecutor extends BaseNodeExecutor {
             log.error("node does not exist . runtimeContext:{}", runtimeContext);
             throw new ProcessException(ErrorCode.NODE_DOES_NOT_EXIST);
         }
-        return Objects.equals(node.getType(), NodeType.END_EVENT_NODE.getCode());
+        return Objects.equals(node.getNodeType(), NodeType.END_EVENT_NODE.getCode());
     }
 
     @Override
@@ -550,7 +550,7 @@ public class FlowExecutor extends BaseNodeExecutor {
         if (isCompleted(runtimeContext)) {
             return null;
         }
-        String type = runtimeContext.getCurrentNodeModel().getType();
+        String type = runtimeContext.getCurrentNodeModel().getNodeType();
         return executorContext.getRuntimeExecutor(type);
     }
 
@@ -559,6 +559,6 @@ public class FlowExecutor extends BaseNodeExecutor {
         if (isCompleted(runtimeContext)) {
             return null;
         }
-        return executorContext.getRuntimeExecutor(runtimeContext.getCurrentNodeModel().getType());
+        return executorContext.getRuntimeExecutor(runtimeContext.getCurrentNodeModel().getNodeType());
     }
 }

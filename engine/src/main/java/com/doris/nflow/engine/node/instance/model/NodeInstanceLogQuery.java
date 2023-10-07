@@ -19,4 +19,6 @@ public class NodeInstanceLogQuery extends BaseQuery {
     private String status;
 
     private String type;
+
+    private String search;
 }
