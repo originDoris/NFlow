@@ -12,16 +12,16 @@ import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.flow.instance.enumerate.FlowInstanceStatus;
 import com.doris.nflow.engine.flow.instance.model.FlowInstance;
 import com.doris.nflow.engine.flow.instance.service.FlowInstanceService;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceDataType;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceLogType;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.model.InstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceLog;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceLogService;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceDataType;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceLogType;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceLog;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceDataService;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceLogService;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceService;
 import com.doris.nflow.engine.util.BaseNodeUtil;
 import com.doris.nflow.engine.util.IdGenerator;
 import com.doris.nflow.engine.util.InstanceDataUtil;
@@ -224,155 +224,6 @@ public class FlowExecutor extends BaseNodeExecutor {
         nodeInstanceResult.setCaller(runtimeContext.getCaller());
         nodeInstanceResult.setArchive(0);
         return nodeInstanceResult;
-    }
-
-    @Override
-    public void commit(RuntimeContext runtimeContext) throws ProcessException {
-        String processStatus = ProcessStatus.SUCCESS.getCode();
-        try {
-            preCommit(runtimeContext);
-            doCommit(runtimeContext);
-        } catch (ReentrantException re) {
-            //ignore
-        } catch (ProcessException pe) {
-            if (!ErrorCode.isSuccess(pe.getErrorCode())) {
-                processStatus = ProcessStatus.FAILED.getCode();
-            }
-            throw pe;
-        } finally {
-            runtimeContext.setProcessStatus(processStatus);
-            postCommit(runtimeContext);
-        }
-    }
-
-
-    private void preCommit(RuntimeContext runtimeContext) throws ProcessException {
-        String flowInstanceCode = runtimeContext.getInstanceDataCode();
-        NodeInstance suspendNodeInstance = runtimeContext.getSuspendNodeInstance();
-        String nodeInstanceCode = suspendNodeInstance.getNodeInstanceCode();
-
-        Optional<NodeInstance> detail = nodeInstanceService.detail(nodeInstanceCode);
-
-        if (detail.isEmpty()) {
-            log.warn("preCommit failed: cannot find nodeInstancePO from db.||flowInstanceCode={}||nodeInstanceCode={}",
-                    flowInstanceCode, nodeInstanceCode);
-            throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_FAILED);
-        }
-        NodeInstance nodeInstance = detail.get();
-
-        if (isCompleted(runtimeContext)) {
-            log.warn("preExecute warning: reentrant process. FlowInstance has been processed completely.||runtimeContext={}", runtimeContext);
-            runtimeContext.setFlowInstanceStatus(FlowInstanceStatus.COMPLETE.getCode());
-            suspendNodeInstance.setId(nodeInstance.getId());
-            suspendNodeInstance.setNodeCode(nodeInstance.getNodeCode());
-            suspendNodeInstance.setSourceNodeInstanceCode(nodeInstance.getSourceNodeInstanceCode());
-            suspendNodeInstance.setSourceNodeCode(nodeInstance.getSourceNodeCode());
-            suspendNodeInstance.setInstanceDataCode(nodeInstance.getInstanceDataCode());
-            suspendNodeInstance.setStatus(nodeInstance.getStatus());
-            throw new ReentrantException(ErrorCode.REENTRANT_WARNING);
-        }
-        Map<String, InstanceData> instanceDataMap;
-        String instanceDataCode = nodeInstance.getInstanceDataCode();
-        if (StringUtils.isBlank(instanceDataCode)) {
-            instanceDataMap = Maps.newHashMap();
-        } else {
-            Optional<NodeInstanceData> instanceDataOptional = nodeInstanceDataService.detail(instanceDataCode);
-            if (instanceDataOptional.isEmpty()) {
-                log.warn("preCommit failed: cannot find instanceDataPO from db." +
-                        "||flowInstanceCode={}||instanceDataCode={}", flowInstanceCode, instanceDataCode);
-                throw new ProcessException(ErrorCode.GET_INSTANCE_DATA_FAILED);
-            }
-            NodeInstanceData nodeInstanceData = instanceDataOptional.get();
-            instanceDataMap = InstanceDataUtil.getInstanceDataMap(nodeInstanceData.getInstanceData());
-        }
-
-        Map<String, InstanceData> commitDataMap = runtimeContext.getInstanceDataMap();
-        if (MapUtils.isNotEmpty(commitDataMap)) {
-            instanceDataCode = genId();
-            instanceDataMap.putAll(commitDataMap);
-
-            NodeInstanceData commitInstanceData = buildCommitInstanceData(runtimeContext,nodeInstanceCode ,
-                    nodeInstance.getNodeCode(), instanceDataCode, instanceDataMap);
-            nodeInstanceDataService.save(commitInstanceData);
-        }
-
-        fillCommitContext(runtimeContext, nodeInstance, instanceDataCode, instanceDataMap);
-    }
-
-    private NodeInstanceData buildCommitInstanceData(RuntimeContext runtimeContext, String nodeInstanceCode, String nodeCode,
-                                                   String newInstanceDataCode, Map<String, InstanceData> instanceDataMap) {
-        NodeInstanceData nodeInstanceData = new NodeInstanceData();
-        BeanUtils.copyProperties(runtimeContext, nodeInstanceData);
-        nodeInstanceData.setNodeInstanceCode(nodeInstanceCode);
-        nodeInstanceData.setNodeCode(nodeCode);
-        nodeInstanceData.setType(NodeInstanceLogType.SUBMIT.getCode());
-        nodeInstanceData.setCreateTime(new Date());
-        nodeInstanceData.setInstanceDataCode(newInstanceDataCode);
-        nodeInstanceData.setInstanceData(new ArrayList<>(instanceDataMap.values()));
-        return nodeInstanceData;
-    }
-
-    private void fillCommitContext(RuntimeContext runtimeContext, NodeInstance nodeInstance, String instanceDataCode,
-                                   Map<String, InstanceData> instanceDataMap) throws ProcessException {
-
-        runtimeContext.setInstanceDataCode(instanceDataCode);
-        runtimeContext.setInstanceDataMap(instanceDataMap);
-
-        updateSuspendNodeInstanceBO(runtimeContext.getSuspendNodeInstance(), nodeInstance, instanceDataCode);
-
-        setCurrentFlowModel(runtimeContext);
-
-        runtimeContext.setNodeInstanceList(Lists.newArrayList());
-    }
-
-    private void updateSuspendNodeInstanceBO(NodeInstance suspendNodeInstance, NodeInstance nodeInstance, String
-            instanceDataCode) {
-        suspendNodeInstance.setId(nodeInstance.getId());
-        suspendNodeInstance.setNodeCode(nodeInstance.getNodeCode());
-        suspendNodeInstance.setStatus(nodeInstance.getStatus());
-        suspendNodeInstance.setSourceNodeInstanceCode(nodeInstance.getSourceNodeInstanceCode());
-        suspendNodeInstance.setSourceNodeCode(nodeInstance.getSourceNodeCode());
-        suspendNodeInstance.setInstanceDataCode(instanceDataCode);
-    }
-
-    private void setCurrentFlowModel(RuntimeContext runtimeContext) throws ProcessException {
-        NodeInstance suspendNodeInstance = runtimeContext.getSuspendNodeInstance();
-        BaseNode currentNodeModel = BaseNodeUtil.getNodeByCode(runtimeContext.getBaseNodeMap(), suspendNodeInstance.getNodeCode());
-        if (currentNodeModel == null) {
-            log.warn("setCurrentFlowModel failed: cannot get currentNodeModel.||flowInstance={}||flowDeployCode={}||nodeCode={}",
-                    runtimeContext.getFlowInstanceCode(), runtimeContext.getFlowDeployCode(), suspendNodeInstance.getNodeCode());
-            throw new ProcessException(ErrorCode.GET_NODE_FAILED);
-        }
-        runtimeContext.setCurrentNodeModel(currentNodeModel);
-    }
-
-    private void doCommit(RuntimeContext runtimeContext) throws ProcessException {
-        BaseNodeExecutor baseNodeExecutor = getExecuteExecutor(runtimeContext);
-        baseNodeExecutor.commit(runtimeContext);
-
-        baseNodeExecutor = baseNodeExecutor.getExecuteExecutor(runtimeContext);
-        while (baseNodeExecutor != null) {
-            baseNodeExecutor.execute(runtimeContext);
-            baseNodeExecutor = baseNodeExecutor.getExecuteExecutor(runtimeContext);
-        }
-    }
-
-    private void postCommit(RuntimeContext runtimeContext) throws ProcessException {
-        if (Objects.equals(runtimeContext.getProcessStatus(), ProcessStatus.SUCCESS.getCode()) && runtimeContext.getCurrentNodeInstance() != null) {
-            runtimeContext.setSuspendNodeInstance(runtimeContext.getCurrentNodeInstance());
-        }
-        saveNodeInstanceList(runtimeContext, NodeInstanceLogType.SUBMIT.getCode());
-
-        if (isCompleted(runtimeContext)) {
-            try {
-                flowInstanceService.modifyStatus(FlowInstanceStatus.COMPLETE, runtimeContext.getFlowInstanceCode());
-            } catch (ParamException e) {
-                log.error("更新流程实例状态失败！", e);
-                throw new ProcessException(e.getErrorCode(), e.getErrorMsg());
-            }
-            runtimeContext.setFlowInstanceStatus(FlowInstanceStatus.COMPLETE.getCode());
-            log.info("postCommit: flowInstance process completely.||flowInstanceCode={}", runtimeContext.getFlowInstanceCode());
-        }
     }
 
     @Override

@@ -1,9 +1,9 @@
-package com.doris.nflow.engine.node.instance.model;
+package com.doris.nflow.engine.flow.instance.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doris.nflow.engine.common.model.BaseModel;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceLogType;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceLogType;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

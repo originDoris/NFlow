@@ -1,13 +1,10 @@
 package com.doris.nflow.engine.common.context;
 
 import com.doris.nflow.engine.common.model.node.BaseNode;
-import com.doris.nflow.engine.node.instance.model.InstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceData;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;

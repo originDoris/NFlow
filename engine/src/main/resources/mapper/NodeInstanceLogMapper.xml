@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.doris.nflow.engine.node.instance.mapper.NodeInstanceLogMapper">
-    <resultMap id="BaseResultMap" type="com.doris.nflow.engine.node.instance.model.NodeInstanceLog">
+<mapper namespace="com.doris.nflow.engine.flow.instance.mapper.NodeInstanceLogMapper">
+    <resultMap id="BaseResultMap" type="com.doris.nflow.engine.flow.instance.model.NodeInstanceLog">
         <result column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
@@ -37,7 +37,7 @@
             where id = #{item.id}
         </foreach>
     </update>
-    <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery">
+    <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.flow.instance.model.NodeInstanceLogQuery">
         select * from node_instance_log
         where archive = 0
         <if test='status != null and status != ""'>

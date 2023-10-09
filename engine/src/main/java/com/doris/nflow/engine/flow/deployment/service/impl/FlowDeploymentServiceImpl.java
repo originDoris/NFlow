@@ -74,15 +74,4 @@ public class FlowDeploymentServiceImpl implements FlowDeploymentService {
         Page<FlowDeployment> page = new Page<>(flowDeploymentQuery.getPageNo(), flowDeploymentQuery.getPageSize());
         return flowDeploymentMapper.queryList(page, flowDeploymentQuery);
     }
-
-    @Override
-    public boolean modifyStatus(FlowDeploymentStatus status, String flowDeployCode) throws ParamException {
-        Optional<FlowDeployment> detail = detail(flowDeployCode);
-        if (detail.isEmpty()) {
-            throw new ParamException(ErrorCode.PARAM_INVALID,"未查询到流程发布信息，请确认！");
-        }
-        FlowDeployment flowDeployment = detail.get();
-        flowDeployment.setStatus(status.getCode());
-        return modify(flowDeployment);
-    }
 }

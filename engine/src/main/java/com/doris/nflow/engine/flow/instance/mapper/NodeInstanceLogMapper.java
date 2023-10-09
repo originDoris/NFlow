@@ -1,11 +1,9 @@
-package com.doris.nflow.engine.node.instance.mapper;
+package com.doris.nflow.engine.flow.instance.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceLog;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceLog;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceLogQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

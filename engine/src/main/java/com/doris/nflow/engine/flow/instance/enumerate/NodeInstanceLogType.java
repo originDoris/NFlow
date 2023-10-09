@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.node.instance.enumerate;
+package com.doris.nflow.engine.flow.instance.enumerate;
 
 /**
  * @author: xhz
@@ -7,7 +7,6 @@ package com.doris.nflow.engine.node.instance.enumerate;
  * @date: 2022/10/1 12:31
  */
 public enum NodeInstanceLogType {
-    //操作类型(system.系统执行 submit.任务提交 revoke.任务撤销)
     SYSTEM("system", "系统执行"),
     SUBMIT("submit", "任务提交"),
     REVOKE("revoke", "处理已撤销"),

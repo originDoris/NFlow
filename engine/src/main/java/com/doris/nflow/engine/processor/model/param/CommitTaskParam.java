@@ -1,6 +1,6 @@
 package com.doris.nflow.engine.processor.model.param;
 
-import com.doris.nflow.engine.node.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

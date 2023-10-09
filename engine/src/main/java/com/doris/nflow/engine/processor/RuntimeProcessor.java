@@ -12,8 +12,8 @@ import com.doris.nflow.engine.flow.deployment.service.FlowDeploymentService;
 import com.doris.nflow.engine.flow.instance.enumerate.FlowInstanceStatus;
 import com.doris.nflow.engine.flow.instance.model.FlowInstance;
 import com.doris.nflow.engine.flow.instance.service.FlowInstanceService;
-import com.doris.nflow.engine.node.instance.model.InstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
 import com.doris.nflow.engine.processor.model.flow.FlowInfo;
 import com.doris.nflow.engine.processor.model.param.CommitTaskParam;
 import com.doris.nflow.engine.processor.model.param.StartProcessorParam;
@@ -46,15 +46,13 @@ public class RuntimeProcessor {
 
     private final FlowDeploymentService flowDeploymentService;
 
-    private final FlowInstanceService flowInstanceService;
 
     private final FlowExecutor flowExecutor;
 
 
 
-    public RuntimeProcessor(FlowDeploymentService flowDeploymentService, FlowInstanceService flowInstanceService, FlowExecutor flowExecutor) {
+    public RuntimeProcessor(FlowDeploymentService flowDeploymentService,FlowExecutor flowExecutor) {
         this.flowDeploymentService = flowDeploymentService;
-        this.flowInstanceService = flowInstanceService;
         this.flowExecutor = flowExecutor;
     }
 
@@ -135,54 +133,5 @@ public class RuntimeProcessor {
         runtimeContext.setBaseNodeMap(BaseNodeUtil.getBaseNodeMap(flowInfo.getFlowModule()));
         runtimeContext.setInstanceDataMap(InstanceDataUtil.getInstanceDataMap(params));
         return runtimeContext;
-    }
-
-
-    public CommitTaskResult commit(CommitTaskParam commitTaskParam) {
-        RuntimeContext runtimeContext = null;
-        try {
-            Optional<FlowInstance> flowInstanceOptional = flowInstanceService.detail(commitTaskParam.getFlowInstanceCode());
-            if (flowInstanceOptional.isEmpty()) {
-                log.warn("commit failed: cannot find flowInstance.||flowInstanceCode={}", commitTaskParam.getFlowInstanceCode());
-                throw new ProcessException(ErrorCode.GET_FLOW_INSTANCE_FAILED);
-            }
-            FlowInstance flowInstance = flowInstanceOptional.get();
-
-            if (Objects.equals(flowInstance.getStatus(), FlowInstanceStatus.TERMINATION.getCode())) {
-                log.warn("commit failed: flowInstance has been completed.||commitTaskParam={}", commitTaskParam);
-                throw new ProcessException(ErrorCode.COMMIT_REJECTRD);
-            }
-            if (Objects.equals(flowInstance.getStatus(), FlowInstanceStatus.COMPLETE.getCode())) {
-                log.warn("commit: reentrant process.||commitTaskParam={}", commitTaskParam);
-                throw new ReentrantException(ErrorCode.REENTRANT_WARNING);
-            }
-            String flowDeployCode = flowInstance.getFlowDeployCode();
-            FlowInfo flowInfo = getFlowInfoByFlowDeployCode(flowDeployCode);
-            runtimeContext = buildRuntimeContext(flowInfo, commitTaskParam.getParams());
-            runtimeContext.setFlowInstanceCode(commitTaskParam.getFlowInstanceCode());
-            runtimeContext.setFlowInstanceStatus(flowInstance.getStatus());
-            NodeInstance suspendNodeInstance = new NodeInstance();
-            suspendNodeInstance.setNodeInstanceCode(commitTaskParam.getNodeInstanceCode());
-            runtimeContext.setSuspendNodeInstance(suspendNodeInstance);
-
-            flowExecutor.commit(runtimeContext);
-
-            return buildCommitTaskResult(runtimeContext);
-        } catch (NFlowException e) {
-            if (!ErrorCode.isSuccess(e.getErrorCode())) {
-                log.warn("commit ProcessException.||commitTaskParam={}||runtimeContext={}, ", commitTaskParam, runtimeContext, e);
-            }
-            return buildCommitTaskResult(runtimeContext, e);
-        }
-    }
-
-    private CommitTaskResult buildCommitTaskResult(RuntimeContext runtimeContext) {
-        CommitTaskResult commitTaskResult = new CommitTaskResult();
-        return (CommitTaskResult) fillRuntimeResult(commitTaskResult, runtimeContext, ErrorCode.SUCCESS.getCode(), ErrorCode.SUCCESS.getMsg());
-    }
-
-    private CommitTaskResult buildCommitTaskResult(RuntimeContext runtimeContext, NFlowException e) {
-        CommitTaskResult commitTaskResult = new CommitTaskResult();
-        return (CommitTaskResult) fillRuntimeResult(commitTaskResult, runtimeContext, e.getErrorCode(), e.getErrorMsg());
     }
 }

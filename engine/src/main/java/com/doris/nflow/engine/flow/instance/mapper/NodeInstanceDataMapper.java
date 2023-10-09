@@ -1,11 +1,9 @@
-package com.doris.nflow.engine.node.instance.mapper;
+package com.doris.nflow.engine.flow.instance.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceDataQuery;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceDataQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,6 +25,4 @@ public interface NodeInstanceDataMapper extends BaseMapper<NodeInstanceData> {
      */
     IPage<NodeInstanceData> queryList(IPage<NodeInstanceData> page, NodeInstanceDataQuery nodeInstanceDataQuery);
 
-
-    NodeInstanceData detailByFlowInstanceCodeAndInstanceDataCode(@Param("flowInstanceCode") String flowInstanceCode, @Param("nodeInstanceDataCode") String nodeInstanceDataCode);
 }

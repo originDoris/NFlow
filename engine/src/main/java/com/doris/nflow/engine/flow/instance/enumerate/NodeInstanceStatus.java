@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.node.instance.enumerate;
+package com.doris.nflow.engine.flow.instance.enumerate;
 
 /**
  * @author: xhz
@@ -7,7 +7,6 @@ package com.doris.nflow.engine.node.instance.enumerate;
  * @date: 2022/10/1 12:31
  */
 public enum NodeInstanceStatus {
-    //状态(success.处理成功 processing.处理中 fail.处理失败 revoke.处理已撤销)
     SUCCESS("success", "处理成功"),
     PROCESSING("processing", "处理中"),
     FAIL("fail", "处理失败"),

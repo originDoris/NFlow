@@ -70,13 +70,5 @@ public interface FlowDeploymentService {
     IPage<FlowDeployment> queryPage(@NotNull(message = "查询参数不能为空！") FlowDeploymentQuery flowDeploymentQuery);
 
 
-    /**
-     * 更新流程发布状态
-     * @param status 状态枚举
-     * @param flowDeployCode 流程发布代码
-     * @return
-     */
-    boolean modifyStatus(@NotNull(message = "状态枚举不能为空！") FlowDeploymentStatus status,
-                         @NotBlank(message = "流程发布代码不能为空！") String flowDeployCode) throws ParamException;
 
 }

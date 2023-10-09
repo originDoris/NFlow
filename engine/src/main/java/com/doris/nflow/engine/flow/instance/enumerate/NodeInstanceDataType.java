@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.node.instance.enumerate;
+package com.doris.nflow.engine.flow.instance.enumerate;
 
 /**
  * @author: xhz
@@ -7,7 +7,6 @@ package com.doris.nflow.engine.node.instance.enumerate;
  * @date: 2022/10/1 12:31
  */
 public enum NodeInstanceDataType {
-    //操作类型(init.实例初始化 system.系统执行 system_pull.系统主动获取 source_update.上游更新 commit.任务提交 revoke.任务撤回)
     SYSTEM("system", "系统执行"),
     SYSTEM_PULL("system_pull", "系统主动获取"),
     SOURCE_UPDATE("source_update", "上游更新"),

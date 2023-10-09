@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = {"com.doris.nflow"})
 @EnableTransactionManagement
-@MapperScan({"com.doris.nflow.engine.flow.definition.mapper","com.doris.nflow.engine.flow.deployment.mapper","com.doris.nflow.engine.flow.instance.mapper","com.doris.nflow.engine.node.instance.mapper"})
+@MapperScan({"com.doris.nflow.engine.flow.definition.mapper","com.doris.nflow.engine.flow.deployment.mapper","com.doris.nflow.engine.flow.instance.mapper"})
 public class ApiApplication {
 
 

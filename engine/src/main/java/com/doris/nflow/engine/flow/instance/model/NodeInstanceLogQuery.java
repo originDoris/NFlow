@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.node.instance.model;
+package com.doris.nflow.engine.flow.instance.model;
 
 import com.doris.nflow.engine.common.model.BaseQuery;
 import lombok.Data;
@@ -10,16 +10,15 @@ import lombok.Data;
  * @date: 2022/10/1 12:25
  */
 @Data
-public class NodeInstanceDataQuery extends BaseQuery {
+public class NodeInstanceLogQuery extends BaseQuery {
 
     private String flowInstanceCode;
 
     private String nodeInstanceCode;
 
-    private String flowModuleCode;
-
-    private String instanceDataCode;
+    private String status;
 
     private String type;
+
     private String search;
 }

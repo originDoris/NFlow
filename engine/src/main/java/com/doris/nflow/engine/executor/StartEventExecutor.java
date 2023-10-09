@@ -8,16 +8,15 @@ import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.DefinitionException;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.BaseNode;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceDataService;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

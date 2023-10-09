@@ -84,15 +84,6 @@ public abstract class BaseNodeExecutor {
      * @throws ProcessException
      */
     public abstract void execute(RuntimeContext runtimeContext) throws ProcessException;
-
-    /**
-     * 提交流程
-     * @param runtimeContext
-     * @throws ProcessException
-     */
-    public abstract void commit(RuntimeContext runtimeContext) throws ProcessException;
-
-
     /**
      * 流程是否已完成
      * @param runtimeContext

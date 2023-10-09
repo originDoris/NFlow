@@ -1,4 +1,4 @@
-package com.doris.nflow.engine.node.instance.model;
+package com.doris.nflow.engine.flow.instance.model;
 
 import lombok.Data;
 

@@ -10,19 +10,17 @@ import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.exception.ReentrantException;
 import com.doris.nflow.engine.common.exception.SuspendException;
 import com.doris.nflow.engine.common.model.node.BaseNode;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.model.InstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceData;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceDataService;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceDataService;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceService;
 import com.doris.nflow.engine.util.BaseNodeUtil;
 import com.doris.nflow.engine.util.InstanceDataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -140,33 +138,6 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
      * @throws ProcessException
      */
     protected void postExecute(RuntimeContext runtimeContext) throws ProcessException {
-    }
-
-    @Override
-    public void commit(RuntimeContext runtimeContext) throws ProcessException {
-        preCommit(runtimeContext);
-
-        try {
-            doCommit(runtimeContext);
-        } catch (SuspendException se) {
-            log.warn("SuspendException.");
-            throw se;
-        } finally {
-            postCommit(runtimeContext);
-        }
-    }
-
-
-    protected void preCommit(RuntimeContext runtimeContext) throws ProcessException {
-        log.warn("preCommit: unsupported element type.||flowInstanceCode={}||elementType={}",
-                runtimeContext.getFlowInstanceCode(), runtimeContext.getCurrentNodeModel().getNodeType());
-        throw new ProcessException(ErrorCode.UNSUPPORTED_ELEMENT_TYPE);
-    }
-
-    protected void doCommit(RuntimeContext runtimeContext) throws ProcessException {
-    }
-
-    protected void postCommit(RuntimeContext runtimeContext) throws ProcessException {
     }
 
 

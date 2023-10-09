@@ -1,17 +1,15 @@
-package com.doris.nflow.engine.node.instance.service.impl;
+package com.doris.nflow.engine.flow.instance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.ParamException;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.mapper.NodeInstanceMapper;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
-import com.doris.nflow.engine.node.instance.service.NodeInstanceService;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceQuery;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
+import com.doris.nflow.engine.flow.instance.mapper.NodeInstanceMapper;
+import com.doris.nflow.engine.flow.instance.service.NodeInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,17 +73,6 @@ public class NodeInstanceServiceImpl implements NodeInstanceService {
     public IPage<NodeInstance> queryPage(NodeInstanceQuery nodeInstanceQuery) {
         Page<NodeInstance> page = new Page<>(nodeInstanceQuery.getPageNo(), nodeInstanceQuery.getPageSize());
         return nodeInstanceMapper.queryList(page, nodeInstanceQuery);
-    }
-
-    @Override
-    public boolean modifyStatus(NodeInstanceStatus status, String nodeInstanceCode) throws ParamException {
-        Optional<NodeInstance> detail = detail(nodeInstanceCode);
-        if (detail.isEmpty()) {
-            throw new ParamException(ErrorCode.PARAM_INVALID,"未查询到流程实例信息，请确认！");
-        }
-        NodeInstance nodeInstance = detail.get();
-        nodeInstance.setStatus(status.getCode());
-        return modify(nodeInstance);
     }
 
 

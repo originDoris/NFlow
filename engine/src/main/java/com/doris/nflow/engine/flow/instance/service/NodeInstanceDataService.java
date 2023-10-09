@@ -1,12 +1,8 @@
-package com.doris.nflow.engine.node.instance.service;
+package com.doris.nflow.engine.flow.instance.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.doris.nflow.engine.common.exception.ParamException;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceDataQuery;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceDataQuery;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -70,15 +66,6 @@ public interface NodeInstanceDataService {
      */
     IPage<NodeInstanceData> queryPage(@NotNull(message = "查询参数不能为空！") NodeInstanceDataQuery nodeInstanceDataQuery);
 
-
-    /**
-     * 通过流程实例代码和节点实例数据代码查询
-     * @param flowInstanceCode 流程实例代码
-     * @param nodeInstanceDataCode 节点实例数据代码
-     * @return
-     */
-    Optional<NodeInstanceData> detailByFlowInstanceCodeAndInstanceDataCode(@NotBlank(message = "流程实例代码不能为空！") String flowInstanceCode,
-                                                                 @NotBlank(message = "节点实例数据代码不能为空！") String nodeInstanceDataCode);
 
 
 }

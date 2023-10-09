@@ -1,16 +1,13 @@
-package com.doris.nflow.engine.node.instance.model;
+package com.doris.nflow.engine.flow.instance.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doris.nflow.engine.common.model.BaseModel;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceDataType;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.handler.InstanceDataHandler;
+import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author: xhz
@@ -19,18 +16,23 @@ import java.util.List;
  * @date: 2022/10/1 12:20
  */
 @Data
-@TableName(value = "instance_data", autoResultMap = true)
-public class NodeInstanceData extends BaseModel {
+@TableName(value = "node_instance",autoResultMap = true)
+public class NodeInstance extends BaseModel {
 
     public static final String NODE_INSTANCE_CODE = "node_instance_code";
 
-    public static final String NODE_INSTANCE_DATA_CODE = "instance_data_code";
+    public static final String FLOW_INSTANCE_CODE = "flow_instance_code";
 
     /**
      * 节点实例代码
      */
     @NotBlank(message = "节点实例代码不能为空！")
     private String nodeInstanceCode;
+
+    /**
+     * 上游节点实例代码
+     */
+    private String sourceNodeInstanceCode;
 
     /**
      * 实例数据代码
@@ -40,7 +42,19 @@ public class NodeInstanceData extends BaseModel {
     /**
      * 节点代码
      */
+    @NotBlank(message = "节点代码不能为空！")
     private String nodeCode;
+
+    @TableField(exist = false)
+    private String nodeName;
+
+    @TableField(exist = false)
+    private Map<String, Object> properties;
+
+    /**
+     * 上游节点代码
+     */
+    private String sourceNodeCode;
 
     /**
      * 流程实例代码
@@ -54,17 +68,16 @@ public class NodeInstanceData extends BaseModel {
     @NotBlank(message = "流程发布代码不能为空！")
     private String flowDeployCode;
 
-    @NotBlank(message = "流程模块代码不能为空！")
-    private String flowModuleCode;
-
-
-    @TableField(typeHandler = InstanceDataHandler.class)
-    private List<InstanceData> instanceData;
-
-
     /**
-     * 操作类型
-     * {@link  NodeInstanceDataType}
+     * 流程实例状态
+     * {@link NodeInstanceStatus}
      */
-    private String type;
+    @NotBlank(message = "流程状态不能为空！")
+    private String status;
+
+    @TableField(exist = false)
+    private String operator;
+
+    @TableField(exist = false)
+    private String remark;
 }

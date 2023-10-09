@@ -1,7 +1,7 @@
 package com.doris.nflow.engine.processor.model.result;
 
-import com.doris.nflow.engine.node.instance.model.InstanceData;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.NodeInstance;
 import lombok.Data;
 
 import java.util.List;

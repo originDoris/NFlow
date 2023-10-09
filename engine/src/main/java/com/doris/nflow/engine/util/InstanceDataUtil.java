@@ -1,6 +1,6 @@
 package com.doris.nflow.engine.util;
 
-import com.doris.nflow.engine.node.instance.model.InstanceData;
+import com.doris.nflow.engine.flow.instance.model.InstanceData;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;

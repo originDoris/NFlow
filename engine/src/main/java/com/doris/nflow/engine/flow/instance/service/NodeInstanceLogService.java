@@ -1,16 +1,10 @@
-package com.doris.nflow.engine.node.instance.service;
+package com.doris.nflow.engine.flow.instance.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.doris.nflow.engine.common.exception.ParamException;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceLogType;
-import com.doris.nflow.engine.node.instance.enumerate.NodeInstanceStatus;
-import com.doris.nflow.engine.node.instance.model.NodeInstance;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceLog;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery;
-import com.doris.nflow.engine.node.instance.model.NodeInstanceQuery;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceLog;
+import com.doris.nflow.engine.flow.instance.model.NodeInstanceLogQuery;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;

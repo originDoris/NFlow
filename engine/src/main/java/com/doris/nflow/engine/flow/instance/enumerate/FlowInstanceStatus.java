@@ -7,7 +7,6 @@ package com.doris.nflow.engine.flow.instance.enumerate;
  * @date: 2022/10/1 12:31
  */
 public enum FlowInstanceStatus {
-    //状态(complete.执行完成 processing.执行中 termination.执行终止(强制终止))
     COMPLETE("complete", "执行完成"),
     PROCESSING("processing", "执行中"),
     TERMINATION("termination", "执行终止(强制终止)"),
