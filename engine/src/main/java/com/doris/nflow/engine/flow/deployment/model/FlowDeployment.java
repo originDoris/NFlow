@@ -35,10 +35,6 @@ public class FlowDeployment extends BaseModel {
     @NotBlank(message = "流程名称不能为空！")
     private String flowName;
 
-    private String tenantCode;
-
-    private String tenant;
-
     /**
      * 流程发布状态
      * {@link FlowDeploymentStatus}

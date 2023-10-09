@@ -5,7 +5,6 @@ import com.doris.nflow.engine.common.constant.NodeTypeConstant;
 import com.doris.nflow.engine.common.context.ExecutorContext;
 import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
-import com.doris.nflow.engine.common.enumerate.DataType;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.task.ServiceTask;
@@ -20,8 +19,6 @@ import com.doris.nflow.engine.util.HttpUtil;
 import com.doris.nflow.engine.util.InstanceDataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +27,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,7 +80,6 @@ public class ServiceTaskExecutor extends RuntimeExecutor {
         InstanceData instanceData = new InstanceData();
         instanceData.setKey(serviceTask.getCode());
         instanceData.setValue(response);
-        instanceData.setType(DataType.STRING.getCode());
         instanceDataMap.put(serviceTask.getCode(), instanceData);
     }
 

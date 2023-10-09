@@ -16,7 +16,6 @@ import com.doris.nflow.engine.node.instance.model.InstanceData;
 import com.doris.nflow.engine.node.instance.model.NodeInstance;
 import com.doris.nflow.engine.processor.model.flow.FlowInfo;
 import com.doris.nflow.engine.processor.model.param.CommitTaskParam;
-import com.doris.nflow.engine.processor.model.param.RollbackTaskParam;
 import com.doris.nflow.engine.processor.model.param.StartProcessorParam;
 import com.doris.nflow.engine.processor.model.result.*;
 import com.doris.nflow.engine.util.BaseNodeUtil;
@@ -186,110 +185,4 @@ public class RuntimeProcessor {
         CommitTaskResult commitTaskResult = new CommitTaskResult();
         return (CommitTaskResult) fillRuntimeResult(commitTaskResult, runtimeContext, e.getErrorCode(), e.getErrorMsg());
     }
-
-    private Optional<FlowInstance> getFlowInstance(String flowInstanceCode) {
-        return flowInstanceService.detail(flowInstanceCode);
-    }
-
-
-    public RollbackTaskResult rollback(@Valid @NotNull(message = "回滚任务参数不能为空！") RollbackTaskParam rollbackTaskParam) {
-        RuntimeContext runtimeContext = null;
-        try {
-            Optional<FlowInstance> flowInstanceOptional = getFlowInstance(rollbackTaskParam.getFlowInstanceCode());
-            if (flowInstanceOptional.isEmpty()) {
-                log.warn("rollback failed: flowInstance is null.||flowInstanceCode={}", rollbackTaskParam.getFlowInstanceCode());
-                throw new ProcessException(ErrorCode.GET_FLOW_INSTANCE_FAILED);
-            }
-
-            FlowInstance flowInstance = flowInstanceOptional.get();
-
-            //3.check status
-            if (!Objects.equals(flowInstance.getStatus(), FlowInstanceStatus.PROCESSING.getCode())) {
-                log.warn("rollback failed: invalid status to rollback.||rollbackTaskParam={}||status={}",
-                        rollbackTaskParam, flowInstance.getStatus());
-                throw new ProcessException(ErrorCode.ROLLBACK_REJECTRD);
-            }
-            String flowDeployCode = flowInstance.getFlowDeployCode();
-
-            FlowInfo flowInfo = getFlowInfoByFlowDeployCode(flowDeployCode);
-
-            runtimeContext = buildRollbackContext(rollbackTaskParam, flowInfo, flowInstance.getStatus());
-
-            //6.process
-            flowExecutor.rollback(runtimeContext);
-
-            //7.build result
-            return buildRollbackTaskResult(runtimeContext);
-        } catch (NFlowException e) {
-            if (!ErrorCode.isSuccess(e.getErrorCode())) {
-                log.warn("rollback ProcessException.||rollbackTaskParam={}||runtimeContext={}, ", rollbackTaskParam, runtimeContext, e);
-            }
-            return buildRollbackTaskResult(runtimeContext, e);
-        }
-    }
-
-
-    private RuntimeContext buildRollbackContext(RollbackTaskParam rollbackTaskParam, FlowInfo flowInfo, String flowInstanceStatus) {
-        RuntimeContext runtimeContext = buildRuntimeContext(flowInfo);
-
-        runtimeContext.setFlowInstanceCode(rollbackTaskParam.getFlowInstanceCode());
-        runtimeContext.setFlowInstanceStatus(flowInstanceStatus);
-
-        NodeInstance suspendNodeInstance = new NodeInstance();
-        suspendNodeInstance.setNodeInstanceCode(rollbackTaskParam.getNodeInstanceCode());
-        runtimeContext.setSuspendNodeInstance(suspendNodeInstance);
-
-        return runtimeContext;
-    }
-
-    private RuntimeContext buildRuntimeContext(FlowInfo flowInfo) {
-        RuntimeContext runtimeContext = new RuntimeContext();
-        BeanUtils.copyProperties(flowInfo, runtimeContext);
-        runtimeContext.setBaseNodeMap(BaseNodeUtil.getBaseNodeMap(flowInfo.getFlowModule()));
-        return runtimeContext;
-    }
-
-    private RollbackTaskResult buildRollbackTaskResult(RuntimeContext runtimeContext) {
-        RollbackTaskResult rollbackTaskResult = new RollbackTaskResult();
-        return (RollbackTaskResult) fillRuntimeResult(rollbackTaskResult, runtimeContext, ErrorCode.SUCCESS.getCode(), ErrorCode.SUCCESS.getMsg());
-    }
-
-    private RollbackTaskResult buildRollbackTaskResult(RuntimeContext runtimeContext, NFlowException e) {
-        RollbackTaskResult rollbackTaskResult = new RollbackTaskResult();
-        return (RollbackTaskResult) fillRuntimeResult(rollbackTaskResult, runtimeContext, e.getErrorCode(), e.getErrorMsg());
-    }
-
-
-    public TerminateResult terminateProcess(String flowInstanceCode) {
-        TerminateResult terminateResult;
-        try {
-            String flowInstanceStatus;
-
-            Optional<FlowInstance> optional = flowInstanceService.detail(flowInstanceCode);
-            if (optional.isEmpty()) {
-                log.warn("terminate failed: flowInstance is null.||flowInstanceCode={}", flowInstanceCode);
-                throw new ProcessException(ErrorCode.GET_FLOW_INSTANCE_FAILED);
-            }
-            FlowInstance flowInstance = optional.get();
-            if (Objects.equals(flowInstance.getStatus(), FlowInstanceStatus.COMPLETE.getCode())) {
-                log.warn("terminateProcess: flowInstance is completed.||flowInstanceCode={}", flowInstanceCode);
-                flowInstanceStatus = FlowInstanceStatus.COMPLETE.getCode();
-            } else {
-                flowInstanceService.modifyStatus(FlowInstanceStatus.TERMINATION, flowInstanceCode);
-                flowInstanceStatus = FlowInstanceStatus.TERMINATION.getCode();
-            }
-
-            terminateResult = new TerminateResult();
-            terminateResult.setFlowInstanceCode(flowInstanceCode);
-            terminateResult.setStatus(flowInstanceStatus);
-        } catch (Exception e) {
-            log.error("terminateProcess exception.||flowInstanceCode={}, ", flowInstanceCode, e);
-            terminateResult = new TerminateResult();
-            terminateResult.setFlowInstanceCode(flowInstanceCode);
-            terminateResult.setErrorCode(ErrorCode.SYSTEM_ERROR.getCode());
-            terminateResult.setErrorMsg(ErrorCode.SYSTEM_ERROR.getMsg());
-        }
-        return terminateResult;
-    }
-
 }

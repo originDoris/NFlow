@@ -6,8 +6,6 @@
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
         <result column="operator" property="operator"/>
-        <result column="tenant" property="tenant"/>
-        <result column="tenant_code" property="tenantCode"/>
         <result column="caller" property="caller"/>
         <result column="archive" property="archive"/>
         <result column="remark" property="remark"/>

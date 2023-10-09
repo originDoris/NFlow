@@ -30,6 +30,9 @@ public interface NodeInstanceLogMapper extends BaseMapper<NodeInstanceLog> {
     IPage<NodeInstanceLog> queryList(IPage<NodeInstanceLog> page, NodeInstanceLogQuery nodeInstanceLogQuery);
 
 
-    boolean replace(@Param("list") List<NodeInstanceLog> nodeInstanceLogList);
 
+    boolean batchSave(@Param("list") List<NodeInstanceLog> nodeInstanceLogList);
+
+
+    boolean batchUpdate(@Param("list") List<NodeInstanceLog> nodeInstanceLogList);
 }

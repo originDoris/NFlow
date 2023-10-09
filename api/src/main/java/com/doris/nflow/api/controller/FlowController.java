@@ -1,7 +1,6 @@
 package com.doris.nflow.api.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.doris.nflow.api.server.GradedApprovalServer;
 import com.doris.nflow.api.server.ServiceFlowServer;
 import com.doris.nflow.api.util.BuildModuleUtil;
 import com.doris.nflow.engine.common.model.node.BaseNode;
@@ -26,20 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/nflow")
 public class FlowController {
-
-    @Autowired
-    private GradedApprovalServer gradedApprovalServer;
-
     @Autowired
     private ServiceFlowServer serviceFlowServer;
 
     @Autowired
     private FlowDeploymentService flowDeploymentService;
-
-    @GetMapping("/runGradedApproval")
-    public CommitTaskResult runGradedApproval(){
-        return gradedApprovalServer.run();
-    }
 
 
     @GetMapping("/queryPage")
@@ -72,7 +62,8 @@ public class FlowController {
     }
 
     @GetMapping("/runServiceFlow")
-    public List<InstanceData> runServiceFlow(String flowDeployCode,String flowModuleCode){
+    public List<InstanceData> runServiceFlow(@RequestParam("flowDeployCode") String flowDeployCode,
+                                             @RequestParam("flowModuleCode") String flowModuleCode){
         return serviceFlowServer.run(flowDeployCode, flowModuleCode);
     }
 }

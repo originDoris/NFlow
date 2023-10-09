@@ -67,9 +67,4 @@ public class HttpUtil {
         return newUri.toString();
     }
 
-    public static void main(String[] args) throws URISyntaxException {
-        URI oldUri = new URI("http://192.168.1.204:8081/datacube/api/info/list?projectId=0&pageSize=10&pageNo=1");
-        System.out.println("oldUri = " + oldUri);
-    }
-
 }

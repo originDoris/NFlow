@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +98,22 @@ public class NodeInstanceServiceImpl implements NodeInstanceService {
 
     @Override
     public boolean replace(List<NodeInstance> nodeInstanceList) {
-       return nodeInstanceMapper.replace(nodeInstanceList);
+        ArrayList<NodeInstance> saveNodeInstance = new ArrayList<>();
+        ArrayList<NodeInstance> modifyNodeInstance = new ArrayList<>();
+        for (NodeInstance nodeInstance : nodeInstanceList) {
+            if (nodeInstance.getId() == null) {
+                saveNodeInstance.add(nodeInstance);
+            }else{
+                modifyNodeInstance.add(nodeInstance);
+            }
+        }
+        if (!saveNodeInstance.isEmpty()) {
+            nodeInstanceMapper.batchSave(saveNodeInstance);
+        }
+        if (!modifyNodeInstance.isEmpty()) {
+            nodeInstanceMapper.batchUpdate(modifyNodeInstance);
+        }
+        return true;
     }
 
 

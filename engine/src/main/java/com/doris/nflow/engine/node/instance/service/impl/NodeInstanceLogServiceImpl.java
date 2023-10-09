@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,6 +75,21 @@ public class NodeInstanceLogServiceImpl implements NodeInstanceLogService {
 
     @Override
     public boolean replace(List<NodeInstanceLog> nodeInstanceLogs) {
-        return nodeInstanceLogMapper.replace(nodeInstanceLogs);
+        ArrayList<NodeInstanceLog> saveInstanceLogs = new ArrayList<>();
+        ArrayList<NodeInstanceLog> updateInstanceLogs = new ArrayList<>();
+        for (NodeInstanceLog nodeInstanceLog : nodeInstanceLogs) {
+            if (nodeInstanceLog.getId() == null) {
+                saveInstanceLogs.add(nodeInstanceLog);
+            }else {
+                updateInstanceLogs.add(nodeInstanceLog);
+            }
+        }
+        if (!saveInstanceLogs.isEmpty()) {
+            nodeInstanceLogMapper.batchSave(saveInstanceLogs);
+        }
+        if (!updateInstanceLogs.isEmpty()) {
+            nodeInstanceLogMapper.batchUpdate(updateInstanceLogs);
+        }
+        return true;
     }
 }

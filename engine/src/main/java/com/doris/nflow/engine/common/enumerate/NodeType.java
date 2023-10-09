@@ -8,7 +8,6 @@ import com.doris.nflow.engine.common.model.node.flow.SequenceFlow;
 import com.doris.nflow.engine.common.model.node.gateway.ExclusiveGateway;
 import com.doris.nflow.engine.common.model.node.task.ScriptTask;
 import com.doris.nflow.engine.common.model.node.task.ServiceTask;
-import com.doris.nflow.engine.common.model.node.task.UserTask;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -25,7 +24,6 @@ public enum NodeType {
      */
     START_EVENT_NODE(NodeTypeConstant.START_EVENT_NODE, "开始节点", StartEvent.class),
     END_EVENT_NODE(NodeTypeConstant.END_EVENT_NODE, "结束节点", EndEvent.class),
-    USER_TASK_NODE(NodeTypeConstant.USER_TASK_NODE, "用户节点", UserTask.class),
     SERVICE_TASK_NODE(NodeTypeConstant.SERVICE_TASK_NODE, "服务节点", ServiceTask.class),
     SCRIPT_TASK_NODE(NodeTypeConstant.SCRIPT_TASK_NODE, "脚本节点", ScriptTask.class),
     EXCLUSIVE_GATEWAY_NODE(NodeTypeConstant.EXCLUSIVE_GATEWAY_NODE, "单一网关/排他网关", ExclusiveGateway.class),

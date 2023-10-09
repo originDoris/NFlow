@@ -31,7 +31,6 @@ public class RuntimeContext implements Serializable {
      */
     private String flowModuleCode;
 
-    private String tenantCode;
 
     private String caller;
 

@@ -6,8 +6,6 @@
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
         <result column="operator" property="operator"/>
-        <result column="tenant" property="tenant"/>
-        <result column="tenant_code" property="tenantCode"/>
         <result column="caller" property="caller"/>
         <result column="archive" property="archive"/>
         <result column="remark" property="remark"/>
@@ -17,14 +15,28 @@
         <result column="flow_instance_code" property="flowInstanceCode"/>
         <result column="status" property="status"/>
     </resultMap>
-    <insert id="replace">
-        replace into node_instance_log(id,create_time,modify_time,tenant,tenant_code,caller,archive,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
-            values
+    <insert id="batchSave">
+        insert into node_instance_log(create_time,modify_time,caller,archive,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
+        values
         <foreach collection="list" open="" close="" item="param" separator=",">
-            (#{param.id},#{param.createTime},#{param.modifyTime},#{param.tenant},#{param.tenantCode},#{param.caller},#{param.archive},
+            (#{param.createTime},#{param.modifyTime},#{param.caller},#{param.archive},
             #{param.nodeInstanceCode},#{param.instanceDataCode},#{param.nodeCode},#{param.flowInstanceCode},#{param.status})
         </foreach>;
     </insert>
+    <update id="batchUpdate">
+        <foreach collection="list" item="item" separator=";">
+            update node_instance_log set
+            modify_time = #{item.modifyTime},
+            caller = #{item.caller},
+            archive = #{item.archive},
+            node_instance_code = #{item.nodeInstanceCode},
+            instance_data_code = #{item.instanceDataCode},
+            node_code = #{item.nodeCode},
+            flow_instance_code = #{item.flowInstanceCode},
+            status = #{item.status}
+            where id = #{item.id}
+        </foreach>
+    </update>
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.node.instance.model.NodeInstanceLogQuery">
         select * from node_instance_log
         where archive = 0

@@ -92,12 +92,6 @@ public abstract class BaseNodeExecutor {
      */
     public abstract void commit(RuntimeContext runtimeContext) throws ProcessException;
 
-    /**
-     * 回滚流程
-     * @param runtimeContext
-     * @throws ProcessException
-     */
-    public abstract void rollback(RuntimeContext runtimeContext) throws ProcessException;
 
     /**
      * 流程是否已完成
@@ -114,17 +108,6 @@ public abstract class BaseNodeExecutor {
      * @throws ProcessException
      */
     protected abstract BaseNodeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException;
-
-    /**
-     * 获取执行回滚流程的执行器
-     * @param runtimeContext
-     * @return
-     * @throws ProcessException
-     */
-    protected abstract BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException;
-
-
-
 
 
 }

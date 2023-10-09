@@ -3,7 +3,6 @@ package com.doris.nflow.engine.executor;
 import com.doris.nflow.engine.common.context.ExecutorContext;
 import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
-import com.doris.nflow.engine.common.enumerate.DataType;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.task.ScriptTask;
@@ -61,7 +60,6 @@ public class ScriptTaskExecutor extends RuntimeExecutor{
         InstanceData instanceData = new InstanceData();
         instanceData.setKey(scriptTask.getCode());
         instanceData.setValue(result);
-        instanceData.setType(DataType.STRING.getCode());
         instanceDataMap.put(scriptTask.getCode(), instanceData);
     }
 

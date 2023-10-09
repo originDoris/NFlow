@@ -41,5 +41,15 @@ public interface NodeInstanceMapper extends BaseMapper<NodeInstance> {
                                             @Param("nodeCode") String nodeCode);
 
 
-    boolean replace(@Param("list") List<NodeInstance> nodeInstanceList);
+
+
+    /**
+     * 批量新增
+     * @param instances
+     * @return
+     */
+    boolean batchSave(@Param("list") List<NodeInstance> instances);
+
+
+    boolean batchUpdate(@Param("list") List<NodeInstance> instances);
 }

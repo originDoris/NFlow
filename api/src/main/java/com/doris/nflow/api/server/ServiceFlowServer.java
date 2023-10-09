@@ -41,16 +41,6 @@ public class ServiceFlowServer {
     }
 
 
-    public List<InstanceData> run(){
-        CreateFlowResult createFlowResult = addFlow();
-
-        DeployFlowResult deployFlowResult = deployFlow(createFlowResult.getFlowModuleCode());
-
-        StartProcessorResult startProcessorResult = startProcessTest(deployFlowResult.getFlowDeployCode(), deployFlowResult.getFlowModuleCode());
-
-        return startProcessorResult.getParams();
-    }
-
 
     public DeployFlowResult addFlow(CreateFlowParam createFlowParam){
         CreateFlowResult createFlowResult = definitionProcessor.create(createFlowParam);
@@ -66,13 +56,6 @@ public class ServiceFlowServer {
         return startProcessorResult.getParams();
     }
 
-    private CreateFlowResult addFlow(){
-
-        CreateFlowParam createFlowParam = new CreateFlowParam();
-        createFlowParam.setFlowName("服务编排");
-        createFlowParam.setFlowModule(BuildModuleUtil.getServiceFlowModule());
-        return definitionProcessor.create(createFlowParam);
-    }
 
     private DeployFlowResult deployFlow(String flowModuleCode){
         DeployFlowParam deployFlowParam = new DeployFlowParam();

@@ -14,4 +14,6 @@ public class DeployFlowResult extends CommonResult {
     private String flowModuleCode;
 
     private String flowDeployCode;
+
+    private String content;
 }

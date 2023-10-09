@@ -126,16 +126,6 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
     }
 
     /**
-     * 验证context参数
-     * @param runtimeContext
-     */
-    protected void verifyContext(RuntimeContext runtimeContext){
-        Assert.notNull(runtimeContext.getFlowInstanceCode(),"流程实例代码不能为空！");
-        Assert.notNull(runtimeContext.getCurrentNodeModel(),"当前流程处理节点不能为空！");
-        Assert.notNull(runtimeContext.getCurrentNodeModel().getCode(),"当前流程处理节点代码不能为空！");
-    }
-
-    /**
      * 执行当前节点的业务
      * @param runtimeContext
      * @throws ProcessException
@@ -180,113 +170,6 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
     }
 
 
-    @Override
-    public void rollback(RuntimeContext runtimeContext) throws ProcessException {
-        try {
-            preRollback(runtimeContext);
-            doRollback(runtimeContext);
-        } catch (SuspendException se) {
-            log.warn("SuspendException.");
-            throw se;
-        } catch (ReentrantException re) {
-            log.warn("ReentrantException: reentrant rollback.");
-        } finally {
-            postRollback(runtimeContext);
-        }
-    }
-
-
-    protected void preRollback(RuntimeContext runtimeContext) throws ProcessException {
-        String flowInstanceCode = runtimeContext.getFlowInstanceCode();
-        String nodeInstanceCode, nodeCode;
-        NodeInstance currentNodeInstance;
-        if (runtimeContext.getCurrentNodeInstance() == null) {
-            currentNodeInstance = runtimeContext.getSuspendNodeInstance();
-        } else {
-            nodeInstanceCode = runtimeContext.getCurrentNodeInstance().getSourceNodeInstanceCode();
-            Optional<NodeInstance> nodeInstanceDetail = nodeInstanceService.detail(nodeInstanceCode);
-            if (nodeInstanceDetail.isEmpty()) {
-                log.warn("preRollback failed: cannot find currentNodeInstancePO from db."
-                        + "||flowInstanceCode={}||nodeInstanceCode={}", flowInstanceCode, nodeInstanceCode);
-                throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_FAILED);
-            }
-            currentNodeInstance = new NodeInstance();
-            BeanUtils.copyProperties(currentNodeInstance, currentNodeInstance);
-
-            String currentInstanceDataCode = currentNodeInstance.getInstanceDataCode();
-            runtimeContext.setInstanceDataCode(currentInstanceDataCode);
-            Optional<NodeInstanceData> nodeInstanceDataOptional = nodeInstanceDataService.detailByFlowInstanceCodeAndInstanceDataCode(flowInstanceCode, currentInstanceDataCode);
-            if (nodeInstanceDataOptional.isPresent()) {
-                NodeInstanceData nodeInstanceData = nodeInstanceDataOptional.get();
-                Map<String, InstanceData> currentInstanceDataMap = InstanceDataUtil.getInstanceDataMap(nodeInstanceData.getInstanceData());
-                runtimeContext.setInstanceDataMap(currentInstanceDataMap);
-            }
-        }
-        runtimeContext.setCurrentNodeInstance(currentNodeInstance);
-
-        nodeInstanceCode = currentNodeInstance.getNodeInstanceCode();
-        nodeCode = currentNodeInstance.getNodeCode();
-        String status = currentNodeInstance.getStatus();
-        if (Objects.equals(status, NodeInstanceStatus.REVOKE.getCode())) {
-            log.warn("preRollback: reentrant process.||flowInstanceCode={}||nodeInstance={}||nodeCode={}", flowInstanceCode, nodeInstanceCode, nodeCode);
-            throw new ReentrantException(ErrorCode.REENTRANT_WARNING);
-        }
-        log.info("preRollback done.||flowInstanceCode={}||nodeInstance={}||nodeCode={}", flowInstanceCode, nodeInstanceCode, nodeCode);
-    }
-
-    /**
-     * Common rollback: overwrite it in customized elementExecutor or do nothing
-     *
-     * @throws Exception
-     */
-    protected void doRollback(RuntimeContext runtimeContext) throws ProcessException {
-    }
-
-    /**
-     * Update runtimeContext: update currentNodeInstance.status to DISABLED and add it to nodeInstanceList
-     *
-     * @throws Exception
-     */
-    protected void postRollback(RuntimeContext runtimeContext) throws ProcessException {
-        NodeInstance currentNodeInstance = runtimeContext.getCurrentNodeInstance();
-        currentNodeInstance.setStatus(NodeInstanceStatus.REVOKE.getCode());
-        runtimeContext.getNodeInstanceList().add(currentNodeInstance);
-    }
-
-    /**
-     * Get elementExecutor to rollback:
-     * Get sourceNodeInstanceId from currentNodeInstance and get sourceElement
-     *
-     * @return
-     * @throws Exception
-     */
-    @Override
-    protected BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException {
-        String flowInstanceId = runtimeContext.getFlowInstanceCode();
-        NodeInstance currentNodeInstance = runtimeContext.getCurrentNodeInstance();
-
-        String sourceNodeInstanceCode = currentNodeInstance.getSourceNodeInstanceCode();
-        if (StringUtils.isBlank(sourceNodeInstanceCode)) {
-            log.warn("getRollbackExecutor: there's no sourceNodeInstance(startEvent)."
-                    + "||flowInstanceCode={}||nodeInstanceCode={}", flowInstanceId, currentNodeInstance.getFlowDeployCode());
-            return null;
-        }
-
-        // TODO: 2019/12/13 get from cache
-        Optional<NodeInstance> detail = nodeInstanceService.detail(sourceNodeInstanceCode);
-        if (detail.isEmpty()) {
-            log.warn("getRollbackExecutor failed: cannot find sourceNodeInstance from db."
-                    + "||flowInstanceCode={}||sourceNodeInstanceCode={}", flowInstanceId, sourceNodeInstanceCode);
-            throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_FAILED);
-        }
-        NodeInstance sourceNodeInstance = detail.get();
-
-        BaseNode sourceNode =runtimeContext.getBaseNodeMap().get(sourceNodeInstance.getNodeCode());
-
-        // TODO: 2019/12/18
-        runtimeContext.setCurrentNodeModel(sourceNode);
-        return executorContext.getRuntimeExecutor(sourceNode.getNodeType());
-    }
 
     @Override
     protected boolean isCompleted(RuntimeContext runtimeContext) throws ProcessException {

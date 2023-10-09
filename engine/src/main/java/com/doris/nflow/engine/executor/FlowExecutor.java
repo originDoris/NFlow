@@ -221,9 +221,8 @@ public class FlowExecutor extends BaseNodeExecutor {
         BeanUtils.copyProperties(nodeInstance, nodeInstanceResult);
         nodeInstanceResult.setFlowInstanceCode(runtimeContext.getFlowInstanceCode());
         nodeInstanceResult.setFlowDeployCode(runtimeContext.getFlowDeployCode());
-        nodeInstanceResult.setTenantCode(runtimeContext.getTenantCode());
         nodeInstanceResult.setCaller(runtimeContext.getCaller());
-        nodeInstanceResult.setArchive(false);
+        nodeInstanceResult.setArchive(0);
         return nodeInstanceResult;
     }
 
@@ -377,149 +376,6 @@ public class FlowExecutor extends BaseNodeExecutor {
     }
 
     @Override
-    public void rollback(RuntimeContext runtimeContext) throws ProcessException {
-        String processStatus = ProcessStatus.SUCCESS.getCode();
-        try {
-            preRollback(runtimeContext);
-            doRollback(runtimeContext);
-        } catch (ReentrantException re) {
-            //ignore
-        } catch (ProcessException pe) {
-            if (!ErrorCode.isSuccess(pe.getErrorCode())) {
-                processStatus = ProcessStatus.FAILED.getCode();
-            }
-            throw pe;
-        } finally {
-            runtimeContext.setProcessStatus(processStatus);
-            postRollback(runtimeContext);
-        }
-    }
-
-    private void preRollback(RuntimeContext runtimeContext) throws ProcessException {
-        String flowInstanceCode = runtimeContext.getFlowInstanceCode();
-
-        String suspendNodeInstanceCode = runtimeContext.getSuspendNodeInstance().getNodeInstanceCode();
-        NodeInstance rollbackNodeInstance = getActiveUserTaskForRollback(flowInstanceCode, suspendNodeInstanceCode,
-                runtimeContext.getBaseNodeMap());
-        if (rollbackNodeInstance == null) {
-            log.warn("preRollback failed: cannot rollback.||runtimeContext={}", runtimeContext);
-            throw new ProcessException(ErrorCode.ROLLBACK_FAILED);
-        }
-
-        //2.check status: flowInstance is completed
-        if (isCompleted(runtimeContext)) {
-            log.warn("invalid preRollback: FlowInstance has been processed completely."
-                    + "||flowInstanceCode={}||flowDeployCode={}", flowInstanceCode, runtimeContext.getFlowDeployCode());
-            NodeInstance suspendNodeInstance = new NodeInstance();
-            BeanUtils.copyProperties(rollbackNodeInstance, suspendNodeInstance);
-            runtimeContext.setSuspendNodeInstance(suspendNodeInstance);
-            runtimeContext.setFlowInstanceStatus(FlowInstanceStatus.COMPLETE.getCode());
-            throw new ProcessException(ErrorCode.ROLLBACK_FAILED);
-        }
-
-        String instanceDataCode = rollbackNodeInstance.getInstanceDataCode();
-        Map<String, InstanceData> instanceDataMap;
-        if (StringUtils.isBlank(instanceDataCode)) {
-            instanceDataMap = Maps.newHashMap();
-        } else {
-            Optional<NodeInstanceData> instanceDataOptional = nodeInstanceDataService.detail(instanceDataCode);
-            if (instanceDataOptional.isEmpty()) {
-                log.warn("preRollback failed: cannot find instanceDataPO from db."
-                        + "||flowInstanceCode={}||instanceDataCode={}", flowInstanceCode, instanceDataCode);
-                throw new ProcessException(ErrorCode.GET_INSTANCE_DATA_FAILED);
-            }
-            instanceDataMap = InstanceDataUtil.getInstanceDataMap(instanceDataOptional.get().getInstanceData());
-        }
-
-        //4.update runtimeContext
-        fillRollbackContext(runtimeContext, rollbackNodeInstance, instanceDataMap);
-    }
-
-    private void fillRollbackContext(RuntimeContext runtimeContext, NodeInstance nodeInstance,
-                                     Map<String, InstanceData> instanceDataMap) throws ProcessException {
-        runtimeContext.setInstanceDataCode(nodeInstance.getInstanceDataCode());
-        runtimeContext.setInstanceDataMap(instanceDataMap);
-        runtimeContext.setNodeInstanceList(Lists.newArrayList());
-        NodeInstance suspendNodeInstanceBO = buildSuspendNodeInstanceBO(nodeInstance);
-        runtimeContext.setSuspendNodeInstance(suspendNodeInstanceBO);
-        setCurrentFlowModel(runtimeContext);
-    }
-
-    private NodeInstance buildSuspendNodeInstanceBO(NodeInstance nodeInstance) {
-        NodeInstance suspendNodeInstance = new NodeInstance();
-        BeanUtils.copyProperties(nodeInstance, suspendNodeInstance);
-        return suspendNodeInstance;
-    }
-
-
-    private NodeInstance getActiveUserTaskForRollback(String flowInstanceCode, String suspendNodeInstanceCode,
-                                                        Map<String, BaseNode> baseNodeMap) {
-        List<NodeInstance> nodeInstanceList = nodeInstanceService.queryListByFlowInstanceCode(flowInstanceCode);
-        if (CollectionUtils.isEmpty(nodeInstanceList)) {
-            log.warn("getActiveUserTaskForRollback: nodeInstanceList is empty."
-                    + "||flowInstanceCode={}||suspendNodeInstanceCode={}", flowInstanceCode, suspendNodeInstanceCode);
-            return null;
-        }
-
-        NodeInstance activeNodeInstance = null;
-        for (NodeInstance nodeInstance : nodeInstanceList) {
-            if (!BaseNodeUtil.isElementType(nodeInstance.getNodeCode(), baseNodeMap, NodeType.USER_TASK_NODE)) {
-                log.info("getActiveUserTaskForRollback: ignore un-userTask nodeInstance.||flowInstanceCode={}"
-                        + "||suspendNodeInstanceCode={}||nodeCode={}", flowInstanceCode, suspendNodeInstanceCode, nodeInstance.getNodeCode());
-                continue;
-            }
-
-            if (Objects.equals(nodeInstance.getStatus(), NodeInstanceStatus.PROCESSING.getCode())) {
-                activeNodeInstance = nodeInstance;
-
-                if (nodeInstance.getNodeInstanceCode().equals(suspendNodeInstanceCode)) {
-                    log.info("getActiveUserTaskForRollback: roll back the active userTask."
-                            + "||flowInstanceCode={}||suspendNodeInstanceCode={}", flowInstanceCode, suspendNodeInstanceCode);
-                    return activeNodeInstance;
-                }
-            } else if (Objects.equals(nodeInstance.getStatus(), NodeInstanceStatus.SUCCESS.getCode())) {
-                if (nodeInstance.getNodeInstanceCode().equals(suspendNodeInstanceCode)) {
-                    log.info("getActiveUserTaskForRollback: roll back the lasted completed userTask."
-                                    + "||flowInstanceCode={}||suspendNodeInstanceCode={}||activeNodeInstance={}",
-                            flowInstanceCode, suspendNodeInstanceCode, activeNodeInstance);
-                    return activeNodeInstance;
-                }
-
-                log.warn("getActiveUserTaskForRollback: cannot rollback the userTask."
-                        + "||flowInstanceCode={}||suspendNodeInstanceCode={}", flowInstanceCode, suspendNodeInstanceCode);
-                return null;
-            }
-            log.info("getActiveUserTaskForRollback: ignore disabled userTask instance.||flowInstanceCode={}"
-                    + "||suspendNodeInstanceCode={}||status={}", flowInstanceCode, suspendNodeInstanceCode, nodeInstance.getStatus());
-
-        }
-        log.warn("getActiveUserTaskForRollback: cannot rollback the suspendNodeInstance."
-                + "||flowInstanceCode={}||suspendNodeInstanceCode={}", flowInstanceCode, suspendNodeInstanceCode);
-        return null;
-    }
-
-    private void doRollback(RuntimeContext runtimeContext) throws ProcessException {
-        BaseNodeExecutor baseNodeExecutor = getRollbackExecutor(runtimeContext);
-        while (baseNodeExecutor != null) {
-            baseNodeExecutor.rollback(runtimeContext);
-            baseNodeExecutor = baseNodeExecutor.getRollbackExecutor(runtimeContext);
-        }
-    }
-
-    private void postRollback(RuntimeContext runtimeContext) {
-
-        if (!Objects.equals(runtimeContext.getProcessStatus(), ProcessStatus.SUCCESS.getCode())) {
-            log.warn("postRollback: ignore while process failed.||runtimeContext={}", runtimeContext);
-            return;
-        }
-        if (runtimeContext.getCurrentNodeInstance() != null) {
-            runtimeContext.setSuspendNodeInstance(runtimeContext.getCurrentNodeInstance());
-        }
-
-        saveNodeInstanceList(runtimeContext, NodeInstanceLogType.REVOKE.getCode());
-
-    }
-    @Override
     protected boolean isCompleted(RuntimeContext runtimeContext) throws ProcessException {
         if (Objects.equals(runtimeContext.getFlowInstanceStatus(), FlowInstanceStatus.COMPLETE.getCode())) {
             return true;
@@ -552,13 +408,5 @@ public class FlowExecutor extends BaseNodeExecutor {
         }
         String type = runtimeContext.getCurrentNodeModel().getNodeType();
         return executorContext.getRuntimeExecutor(type);
-    }
-
-    @Override
-    protected BaseNodeExecutor getRollbackExecutor(RuntimeContext runtimeContext) throws ProcessException {
-        if (isCompleted(runtimeContext)) {
-            return null;
-        }
-        return executorContext.getRuntimeExecutor(runtimeContext.getCurrentNodeModel().getNodeType());
     }
 }
