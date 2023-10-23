@@ -1,5 +1,7 @@
 package com.doris.nflow.engine.executor;
 
+import com.alibaba.fastjson2.JSON;
+import com.doris.nflow.engine.common.constant.WebSocketMessageConstant;
 import com.doris.nflow.engine.common.context.ExecutorContext;
 import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
@@ -22,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,13 +76,19 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
             doExecute(runtimeContext);
         } catch (ReentrantException re) {
             log.warn("execute ReentrantException: reentrant execute.||runtimeContext={},", runtimeContext, re);
+            sendWebSocketMessage(MessageFormat.format(WebSocketMessageConstant.ERROR_NODE_MESSAGE, runtimeContext.getCurrentNodeModel().getName(), re.getErrorMsg()), runtimeContext.getWebSocketKey());
         } catch (SuspendException se) {
             log.info("execute suspend.||runtimeContext={}", runtimeContext);
+            sendWebSocketMessage(MessageFormat.format(WebSocketMessageConstant.ERROR_NODE_MESSAGE, runtimeContext.getCurrentNodeModel().getName(), se.getErrorMsg()), runtimeContext.getWebSocketKey());
             throw se;
-        } finally {
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally{
             postExecute(runtimeContext);
         }
     }
+
+
 
 
     /**
@@ -129,7 +138,12 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
      * @throws ProcessException
      */
     protected void doExecute(RuntimeContext runtimeContext) throws ProcessException {
-
+        String name = runtimeContext.getCurrentNodeModel().getName();
+        if (StringUtils.isBlank(name)) {
+            name = runtimeContext.getCurrentNodeModel().getCode();
+        }
+        // 发送WebSocket消息
+        sendWebSocketMessage(MessageFormat.format(WebSocketMessageConstant.INFO_NODE_START_MESSAGE, name), runtimeContext.getWebSocketKey());
     }
 
     /**
@@ -138,6 +152,16 @@ public abstract class RuntimeExecutor extends BaseNodeExecutor{
      * @throws ProcessException
      */
     protected void postExecute(RuntimeContext runtimeContext) throws ProcessException {
+        InstanceData instanceData = runtimeContext.getInstanceDataMap().get(runtimeContext.getCurrentNodeModel().getCode());
+        String data = "{}";
+        if (instanceData != null) {
+            data = JSON.toJSONString(instanceData);
+        }
+        String name = runtimeContext.getCurrentNodeModel().getName();
+        if (StringUtils.isBlank(name)) {
+            name = runtimeContext.getCurrentNodeModel().getCode();
+        }
+        sendWebSocketMessage(MessageFormat.format(WebSocketMessageConstant.INFO_NODE_END_MESSAGE, name, data), runtimeContext.getWebSocketKey());
     }
 
 

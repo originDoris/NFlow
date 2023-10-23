@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
  * @date: 2022/10/1 12:20
  */
 @Data
-@TableName(value = "flow_instance",autoResultMap = true)
+@TableName(value = "fw_flow_instance",autoResultMap = true)
 public class FlowInstance extends BaseModel {
 
     public static final String FLOW_INSTANCE_CODE = "flow_instance_code";

@@ -44,4 +44,32 @@ public class InstanceDataUtil {
         });
         return dataMap;
     }
+
+    public static List<InstanceData> paresInstanceData(Map<String, Object> params) {
+        List<InstanceData> data = new ArrayList<>();
+        if (params == null) {
+            return data;
+        }
+
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            InstanceData instanceData = new InstanceData();
+            instanceData.setKey(entry.getKey());
+            instanceData.setValue(entry.getValue());
+            data.add(instanceData);
+        }
+        return data;
+    }
+
+
+    public static Map<String, Object> parseVariables(List<InstanceData> params) {
+        HashMap<String, Object> map = new HashMap<>();
+        if (params == null || params.isEmpty()) {
+            return map;
+        }
+
+        for (InstanceData param : params) {
+            map.put(param.getKey(), param.getValue());
+        }
+        return map;
+    }
 }

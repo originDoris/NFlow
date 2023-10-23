@@ -2,6 +2,7 @@ package com.doris.nflow.engine.flow.deployment.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.doris.nflow.engine.common.exception.ParamException;
+import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.flow.definition.model.FlowDefinition;
 import com.doris.nflow.engine.flow.deployment.enumerate.FlowDeploymentStatus;
 import com.doris.nflow.engine.flow.deployment.model.FlowDeployment;
@@ -32,6 +33,7 @@ public interface FlowDeploymentService {
 
     /**
      * 更新流程发布数据
+     *
      * @param flowDeployment
      * @return
      */

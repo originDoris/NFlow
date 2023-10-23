@@ -1,6 +1,7 @@
 package com.doris.nflow.engine.executor;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.doris.nflow.engine.common.constant.NodeTypeConstant;
 import com.doris.nflow.engine.common.context.ExecutorContext;
 import com.doris.nflow.engine.common.context.ExpressionCalculatorContext;
@@ -8,7 +9,6 @@ import com.doris.nflow.engine.common.context.RuntimeContext;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.task.ServiceTask;
-import com.doris.nflow.engine.executor.enumerate.HttpMethodType;
 import com.doris.nflow.engine.flow.instance.enumerate.NodeInstanceStatus;
 import com.doris.nflow.engine.flow.instance.model.InstanceData;
 import com.doris.nflow.engine.flow.instance.model.NodeInstance;
@@ -17,18 +17,25 @@ import com.doris.nflow.engine.flow.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.flow.instance.service.NodeInstanceService;
 import com.doris.nflow.engine.util.HttpUtil;
 import com.doris.nflow.engine.util.InstanceDataUtil;
+import com.doris.nflow.engine.verticle.FlowVerticle;
+import io.reactivex.rxjava3.core.Single;
+import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author: xhz
@@ -40,64 +47,56 @@ import java.util.Optional;
 @Slf4j
 public class ServiceTaskExecutor extends RuntimeExecutor {
 
-    public static final String FLOW_INSTANCE_MESSAGE = "flowInstanceCode=";
+    private final FlowVerticle flowVerticle;
 
-    public static final Long DEFAULT_TIMEOUT = 3000L;
+    @Value("${datacube.domain}")
+    private String dataCubeDomain;
 
-    public static final String FLOW_INSTANCE_CODE = "flowInstanceCode";
-
-    public ServiceTaskExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService) {
+    public ServiceTaskExecutor(NodeInstanceService nodeInstanceService, @Lazy ExecutorContext executorContext, ExpressionCalculatorContext expressionCalculatorContext, NodeInstanceDataService nodeInstanceDataService, FlowVerticle flowVerticle) {
         super(nodeInstanceService, executorContext, expressionCalculatorContext, nodeInstanceDataService);
+        this.flowVerticle = flowVerticle;
     }
 
     @Override
     protected void doExecute(RuntimeContext runtimeContext) throws ProcessException {
-        ServiceTask serviceTask = (ServiceTask) runtimeContext.getCurrentNodeModel();
-        if (StringUtils.isBlank(serviceTask.getUrl())) {
-            log.info("service task url is null || runtimeContext:{}", runtimeContext);
-            return;
+        super.doExecute(runtimeContext);
+        ServiceTask serviceTask = JSON.parseObject(JSON.toJSONString(runtimeContext.getCurrentNodeModel()), ServiceTask.class);
+        if (serviceTask.getApiCode() == null) {
+            log.info("service task apiCode is null || runtimeContext:{}", runtimeContext);
+            throw new ProcessException(ErrorCode.GET_SERVICE_ID_IS_NULL);
         }
-        String methodType = serviceTask.getMethodType();
-        if (StringUtils.isBlank(methodType)) {
-            log.info("service task methodType is null || runtimeContext:{}", runtimeContext);
-            return;
-        }
-        String url = serviceTask.getUrl();
-        url = appendUrlFlowInstanceCode(url, runtimeContext.getFlowInstanceCode());
-        Long timeout = serviceTask.getTimeout() == null ? DEFAULT_TIMEOUT : serviceTask.getTimeout();
-
-        Map<String, InstanceData> instanceDataMap = runtimeContext.getInstanceDataMap();
-        String response;
-        if (HttpMethodType.GET.getCode().equals(methodType)) {
-            response = sendGet(url,timeout);
-        }else{
-            Map<String, Object> dataMap = InstanceDataUtil.parseInstanceDataMap(instanceDataMap);
-            dataMap.put(FLOW_INSTANCE_CODE, runtimeContext.getFlowInstanceCode());
-            response = sendPost(url, serviceTask.getHeaderMap(), dataMap,timeout);
-        }
+        // todo 发起http请求获取结果
+        String response = sendRequest(serviceTask.getApiCode(), runtimeContext.getVariables());
         log.info("service task doExecute result :{}", response);
 
+        Map<String, InstanceData> instanceDataMap = runtimeContext.getInstanceDataMap();
         InstanceData instanceData = new InstanceData();
         instanceData.setKey(serviceTask.getCode());
         instanceData.setValue(response);
         instanceDataMap.put(serviceTask.getCode(), instanceData);
+
+        JSONObject jsonObject = JSON.parseObject(response);
+        runtimeContext.getVariables().putAll(jsonObject);
     }
 
 
-    private String sendGet(String url, Long timeout) {
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).timeout(Duration.ofMillis(timeout)).GET().build();
-        HttpResponse.BodyHandler<String> bodyHandler = HttpResponse.BodyHandlers.ofString();
-        return HttpUtil.send(request, bodyHandler);
+    /**
+     * 请求接口获取数据
+     *
+     * @param apiCode
+     * @param variables
+     * @return
+     */
+    private String sendRequest(String apiCode, Map<String, Object> variables) {
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("apiCode", apiCode);
+        body.put("params", variables);
+        return sendPost(dataCubeDomain + "/api/info/flowExec", body);
     }
 
-    private String sendPost(String url, Map<String, String> headerMap,Map<String, Object> dataMap,Long timeout) {
-        HttpRequest.Builder getRequest = HttpRequest.newBuilder().timeout(Duration.ofMillis(timeout))
+    private String sendPost(String url,Map<String, Object> dataMap) {
+        HttpRequest.Builder getRequest = HttpRequest.newBuilder().timeout(Duration.ofMillis(30000))
                 .uri(URI.create(url));
-        for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-            String value = entry.getValue();
-            String key = entry.getKey();
-            getRequest.header(key, value);
-        }
         getRequest.header("Content-Type", "application/json");
         HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(JSON.toJSONString(dataMap));
         getRequest.POST(bodyPublisher);
@@ -107,14 +106,6 @@ public class ServiceTaskExecutor extends RuntimeExecutor {
     }
 
 
-    private String appendUrlFlowInstanceCode(String url,String flowInstanceCode){
-        try {
-            return HttpUtil.appendUri(url, FLOW_INSTANCE_MESSAGE + flowInstanceCode);
-        } catch (URISyntaxException e) {
-            log.error("追加流程实例参数失败！", e);
-            return url;
-        }
-    }
 
     @Override
     protected void postExecute(RuntimeContext runtimeContext) throws ProcessException {
@@ -124,16 +115,15 @@ public class ServiceTaskExecutor extends RuntimeExecutor {
         runtimeContext.getNodeInstanceList().add(currentNodeInstance);
 
         Optional<NodeInstanceData> instanceDataOptional = nodeInstanceDataService.detail(runtimeContext.getInstanceDataCode());
-        if (instanceDataOptional.isEmpty()) {
-            log.info("节点实例数据不存在！|| runtimeContext:{}", runtimeContext);
-            throw new ProcessException(ErrorCode.GET_NODE_INSTANCE_DATA_FAILED);
+        if (instanceDataOptional.isPresent()) {
+            NodeInstanceData nodeInstanceData = instanceDataOptional.get();
+            nodeInstanceData.setInstanceData(InstanceDataUtil.getInstanceDataList(runtimeContext.getInstanceDataMap()));
+            boolean modifyResult = nodeInstanceDataService.modify(nodeInstanceData);
+            if (!modifyResult) {
+                log.info("更新节点实例数据失败！|| runtimeContext:{}", runtimeContext);
+                throw new ProcessException(ErrorCode.MODIFY_NODE_INSTANCE_DATA_FAILED);
+            }
         }
-        NodeInstanceData nodeInstanceData = instanceDataOptional.get();
-        nodeInstanceData.setInstanceData(InstanceDataUtil.getInstanceDataList(runtimeContext.getInstanceDataMap()));
-        boolean modifyResult = nodeInstanceDataService.modify(nodeInstanceData);
-        if (!modifyResult) {
-            log.info("更新节点实例数据失败！|| runtimeContext:{}", runtimeContext);
-            throw new ProcessException(ErrorCode.MODIFY_NODE_INSTANCE_DATA_FAILED);
-        }
+        super.postExecute(runtimeContext);
     }
 }

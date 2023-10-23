@@ -1,11 +1,13 @@
 package com.doris.nflow.engine.processor.model.param;
 
+import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.flow.instance.model.InstanceData;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: xhz
@@ -16,11 +18,15 @@ import java.util.List;
 @Data
 public class StartProcessorParam implements Serializable {
 
-    @NotBlank(message = "流程发布代码不能为空！")
     private String flowDeployCode;
 
-    @NotBlank(message = "流程模块代码不能为空！")
     private String flowModuleCode;
 
     private List<InstanceData> params;
+
+    private Map<String, Object> apiParams;
+
+    private String webSocketKey;
+
+    private List<BaseNode> flowModule;
 }

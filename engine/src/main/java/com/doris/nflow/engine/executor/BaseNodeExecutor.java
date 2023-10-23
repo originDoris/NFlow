@@ -6,12 +6,15 @@ import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.DefinitionException;
 import com.doris.nflow.engine.common.exception.ProcessException;
 import com.doris.nflow.engine.common.model.node.BaseNode;
+import com.doris.nflow.engine.socket.FlowWebSocketServer;
 import com.doris.nflow.engine.util.IdGenerator;
 import com.doris.nflow.engine.util.StrongUuidGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -101,4 +104,24 @@ public abstract class BaseNodeExecutor {
     protected abstract BaseNodeExecutor getExecuteExecutor(RuntimeContext runtimeContext) throws ProcessException;
 
 
+    /**
+     * 发送websocket消息
+     *
+     * @param message
+     * @param webSocketKey
+     */
+    protected void sendWebSocketMessage(String message, String webSocketKey) {
+        if (StringUtils.isBlank(webSocketKey)) {
+            return;
+        }
+        FlowWebSocketServer flowWebSocketServer = FlowWebSocketServer.getWebSocketSet().get(webSocketKey);
+        if (flowWebSocketServer == null) {
+            return;
+        }
+        try {
+            flowWebSocketServer.sendMessage(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

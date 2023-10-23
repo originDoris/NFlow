@@ -1,6 +1,5 @@
 package com.doris.nflow.engine.common.model.node.task;
 
-import com.alibaba.fastjson2.annotation.JSONType;
 import com.doris.nflow.engine.common.constant.ExpressionTypeConstant;
 import lombok.Data;
 
@@ -16,7 +15,6 @@ public class ScriptTask extends TaskNode{
     /**
      * 脚本
      */
-
     private String script;
 
     /**
@@ -24,6 +22,13 @@ public class ScriptTask extends TaskNode{
      * 参考{@link  ExpressionTypeConstant}
      */
     private String scriptType;
+
+
+    /**
+     * 插件ID
+     */
+    private Integer pluginId;
+
 
 
     public String getScript() {
@@ -35,12 +40,25 @@ public class ScriptTask extends TaskNode{
         getProperties().put("script", script);
     }
 
+    /**
+     * 为空时使用 groovy
+     * @return
+     */
     public String getScriptType() {
-        return getProperties().get("scriptType") == null ? null : (String) getProperties().get("scriptType");
+        return getProperties().get("scriptType") == null ? ExpressionTypeConstant.GROOVY : (String) getProperties().get("scriptType");
     }
 
     public void setScriptType(String scriptType) {
         this.scriptType = scriptType;
         getProperties().put("scriptType", scriptType);
+    }
+
+    public Integer getPluginId() {
+        return getProperties().get("pluginId") == null ? null : (Integer) getProperties().get("pluginId");
+    }
+
+    public void setPluginId(Integer pluginId) {
+        this.pluginId = pluginId;
+        getProperties().put("pluginId", pluginId);
     }
 }

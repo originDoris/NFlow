@@ -20,7 +20,7 @@ import java.util.List;
  * @date: 2022/10/1 10:07
  */
 @Data
-@TableName(value = "flow_deployment", autoResultMap = true)
+@TableName(value = "fw_flow_deployment", autoResultMap = true)
 public class FlowDeployment extends BaseModel {
     public static final String FLOW_MODULE_CODE = "flow_module_code";
     public static final String FLOW_DEPLOY_CODE = "flow_deploy_code";

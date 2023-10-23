@@ -4,15 +4,14 @@ import com.doris.nflow.engine.flow.instance.model.InstanceData;
 import com.doris.nflow.engine.flow.instance.service.NodeInstanceDataService;
 import com.doris.nflow.engine.processor.DefinitionProcessor;
 import com.doris.nflow.engine.processor.RuntimeProcessor;
-import com.doris.nflow.engine.processor.model.param.CreateFlowParam;
-import com.doris.nflow.engine.processor.model.param.DeployFlowParam;
-import com.doris.nflow.engine.processor.model.param.StartProcessorParam;
+import com.doris.nflow.engine.processor.model.param.*;
 import com.doris.nflow.engine.processor.model.result.CreateFlowResult;
 import com.doris.nflow.engine.processor.model.result.DeployFlowResult;
 import com.doris.nflow.engine.processor.model.result.StartProcessorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,9 +47,21 @@ public class ServiceFlowServer {
     }
 
 
+    public void modifyFlow(ModifyFlowParam modifyFlowParam){
+        String flowModuleCode = modifyFlowParam.getFlowModuleCode();
+        definitionProcessor.modify(modifyFlowParam);
+
+    }
+
+
 
     public List<InstanceData> run(String flowDeployCode,String flowModuleCode){
-        StartProcessorResult startProcessorResult = startProcessTest(flowDeployCode, flowModuleCode);
+        StartProcessorResult startProcessorResult = startProcessTest(flowDeployCode, flowModuleCode,null);
+        return startProcessorResult.getParams();
+    }
+
+    public List<InstanceData> run(String flowDeployCode, String flowModuleCode, List<InstanceData> params) {
+        StartProcessorResult startProcessorResult = startProcessTest(flowDeployCode, flowModuleCode, params);
         return startProcessorResult.getParams();
     }
 
@@ -61,10 +72,11 @@ public class ServiceFlowServer {
         return definitionProcessor.deploy(deployFlowParam);
     }
 
-    private StartProcessorResult startProcessTest(String flowDeployCode,String flowModuleCode){
+    private StartProcessorResult startProcessTest(String flowDeployCode, String flowModuleCode, List<InstanceData> params) {
         StartProcessorParam startProcessorParam = new StartProcessorParam();
         startProcessorParam.setFlowDeployCode(flowDeployCode);
         startProcessorParam.setFlowModuleCode(flowModuleCode);
+        startProcessorParam.setParams(params);
         return runtimeProcessor.startProcess(startProcessorParam);
     }
 

@@ -46,6 +46,7 @@ public class BaseModel implements Serializable {
     /**
      * 是否归档 true 0 未删除 false 1 已删除
      */
+    @TableLogic
     protected Integer archive;
 
     /**

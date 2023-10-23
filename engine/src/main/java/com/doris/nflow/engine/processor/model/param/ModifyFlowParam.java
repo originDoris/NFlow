@@ -32,4 +32,8 @@ public class ModifyFlowParam extends CommonParam {
     private String flowModuleCode;
 
     private String remark;
+
+    private String flowDeployCode;
+
+    private String content;
 }

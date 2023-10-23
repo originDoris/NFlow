@@ -17,7 +17,7 @@
         <result column="status" property="status"/>
     </resultMap>
     <insert id="batchSave">
-        insert into node_instance( create_time,modify_time,caller,
+        insert into fw_node_instance( create_time,modify_time,caller,
         archive,node_instance_code,source_node_instance_code,instance_data_code,node_code,
         source_node_code,flow_instance_code,flow_deploy_code,status)
         values
@@ -29,7 +29,7 @@
     </insert>
     <update id="batchUpdate">
         <foreach collection="list" item="item" separator=";">
-            update node_instance set
+            update fw_node_instance set
             modify_time = #{item.modifyTime},
             caller = #{item.caller},
             archive = #{item.archive},
@@ -45,7 +45,7 @@
         </foreach>
     </update>
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.flow.instance.model.NodeInstanceQuery">
-        select * from node_instance
+        select * from fw_node_instance
         where archive = 0
         <if test='status != null and status != ""'>
             and status = #{status}
@@ -64,7 +64,7 @@
         </if>
     </select>
     <select id="detailBySourceInstanceCode" resultMap="BaseResultMap">
-        select * from node_instance where archive = 0
+        select * from fw_node_instance where archive = 0
         and flow_instance_code = #{flowInstanceCode}
         and source_node_instance_code = #{sourceInstanceCode}
         and node_code = #{nodeCode}

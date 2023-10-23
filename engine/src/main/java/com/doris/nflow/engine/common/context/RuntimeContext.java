@@ -6,6 +6,8 @@ import com.doris.nflow.engine.flow.instance.model.NodeInstance;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +50,7 @@ public class RuntimeContext implements Serializable {
 
     private NodeInstance suspendNodeInstance;
 
-    private List<NodeInstance> nodeInstanceList;
+    private List<NodeInstance> nodeInstanceList = new ArrayList<>();
 
 
     /**
@@ -68,10 +70,18 @@ public class RuntimeContext implements Serializable {
     /**
      * 实例数据map
      */
-    private Map<String, InstanceData> instanceDataMap;
+    private Map<String, InstanceData> instanceDataMap = new HashMap<>();
+
+
+    /**
+     * 运行过程中的变量
+     */
+    private Map<String, Object> variables = new HashMap<>();
 
     /**
      * 流程状态
      */
     private String processStatus;
+
+    private String webSocketKey;
 }

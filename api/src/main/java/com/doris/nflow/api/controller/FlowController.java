@@ -2,7 +2,7 @@ package com.doris.nflow.api.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.doris.nflow.api.server.ServiceFlowServer;
-import com.doris.nflow.api.util.BuildModuleUtil;
+import com.doris.nflow.engine.util.BuildModuleUtil;
 import com.doris.nflow.engine.common.model.node.BaseNode;
 import com.doris.nflow.engine.flow.deployment.model.FlowDeployment;
 import com.doris.nflow.engine.flow.deployment.model.FlowDeploymentQuery;
@@ -10,9 +10,9 @@ import com.doris.nflow.engine.flow.deployment.service.FlowDeploymentService;
 import com.doris.nflow.engine.flow.instance.model.InstanceData;
 import com.doris.nflow.engine.processor.model.param.CreateFlowParam;
 import com.doris.nflow.engine.processor.model.result.DeployFlowResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -24,10 +24,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/nflow")
 public class FlowController {
-    @Autowired
+    @Resource
     private ServiceFlowServer serviceFlowServer;
 
-    @Autowired
+    @Resource
     private FlowDeploymentService flowDeploymentService;
 
 

@@ -14,47 +14,15 @@ import java.util.Map;
 @Data
 public class ServiceTask extends TaskNode {
 
-    private String url;
-
-    private String methodType;
-
-    private Map<String, String> headerMap;
-
-    /**
-     * 请求超时时间 （毫秒）
-     */
-    private Long timeout;
+    private String apiCode;
 
 
-    public String getUrl() {
-        return (String) getProperties().get("url");
+    public String getApiCode() {
+        return getProperties().get("apiCode") == null ? null : (String) getProperties().get("apiCode");
     }
 
-    public void setUrl(String url) {
-        getProperties().put("url", url);
-    }
-
-    public String getMethodType() {
-        return getProperties().get("methodType") == null ? null : (String) getProperties().get("methodType");
-    }
-
-    public void setMethodType(String methodType) {
-        getProperties().put("methodType", methodType);
-    }
-
-    public Map<String, String> getHeaderMap() {
-        return getProperties().get("headerMap") == null ? null : (Map<String, String>) getProperties().get("headerMap");
-    }
-
-    public void setHeaderMap(Map<String, String> headerMap) {
-        getProperties().put("headerMap", headerMap);
-    }
-
-    public Long getTimeout() {
-        return getProperties().get("timeout") == null ? null : (Long) getProperties().get("timeout");
-    }
-
-    public void setTimeout(Long timeout) {
-        getProperties().put("timeout", timeout);
+    public void setApiCode(String apiCode) {
+        this.apiCode = apiCode;
+        getProperties().put("apiCode", apiCode);
     }
 }

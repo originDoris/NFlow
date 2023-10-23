@@ -16,7 +16,7 @@
         <result column="status" property="status"/>
     </resultMap>
     <insert id="batchSave">
-        insert into node_instance_log(create_time,modify_time,caller,archive,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
+        insert into fw_node_instance_log(create_time,modify_time,caller,archive,node_instance_code,instance_data_code,node_code,flow_instance_code,status)
         values
         <foreach collection="list" open="" close="" item="param" separator=",">
             (#{param.createTime},#{param.modifyTime},#{param.caller},#{param.archive},
@@ -25,7 +25,7 @@
     </insert>
     <update id="batchUpdate">
         <foreach collection="list" item="item" separator=";">
-            update node_instance_log set
+            update fw_node_instance_log set
             modify_time = #{item.modifyTime},
             caller = #{item.caller},
             archive = #{item.archive},
@@ -38,7 +38,7 @@
         </foreach>
     </update>
     <select id="queryList" resultMap="BaseResultMap" parameterType="com.doris.nflow.engine.flow.instance.model.NodeInstanceLogQuery">
-        select * from node_instance_log
+        select * from fw_node_instance_log
         where archive = 0
         <if test='status != null and status != ""'>
             and status = #{status}

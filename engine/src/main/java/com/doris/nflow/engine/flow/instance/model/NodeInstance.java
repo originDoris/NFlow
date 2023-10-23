@@ -16,7 +16,7 @@ import java.util.Map;
  * @date: 2022/10/1 12:20
  */
 @Data
-@TableName(value = "node_instance",autoResultMap = true)
+@TableName(value = "fw_node_instance",autoResultMap = true)
 public class NodeInstance extends BaseModel {
 
     public static final String NODE_INSTANCE_CODE = "node_instance_code";

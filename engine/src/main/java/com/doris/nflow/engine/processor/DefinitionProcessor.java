@@ -3,10 +3,7 @@ package com.doris.nflow.engine.processor;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
 import com.doris.nflow.engine.common.exception.DefinitionException;
 import com.doris.nflow.engine.common.exception.ParamException;
-import com.doris.nflow.engine.processor.model.param.CreateFlowParam;
-import com.doris.nflow.engine.processor.model.param.DeployFlowParam;
-import com.doris.nflow.engine.processor.model.param.EditFlowParam;
-import com.doris.nflow.engine.processor.model.param.ModifyFlowParam;
+import com.doris.nflow.engine.processor.model.param.*;
 import com.doris.nflow.engine.processor.model.result.CreateFlowResult;
 import com.doris.nflow.engine.processor.model.result.DeployFlowResult;
 import com.doris.nflow.engine.processor.model.result.EditFlowResult;
@@ -142,6 +139,19 @@ public class DefinitionProcessor {
         return modifyFlowResult;
     }
 
+
+    public void modifyDeploy(ModifyFlowParam modifyFlowParam) {
+        FlowDeployment flowDeployment = new FlowDeployment();
+        flowDeployment.setFlowDeployCode(modifyFlowParam.getFlowDeployCode());
+        flowDeployment.setContent(modifyFlowParam.getContent());
+        flowDeployment.setFlowModule(modifyFlowParam.getFlowModule());
+        flowDeploymentService.modify(flowDeployment);
+    }
+
+    public void removeFlow(RemoveFlowParam removeFlowParam) {
+        flowDeploymentService.remove(removeFlowParam.getFlowDeployCode());
+        flowDefinitionService.remove(removeFlowParam.getFlowModuleCode());
+    }
 
     /**
      * 发布流程信息

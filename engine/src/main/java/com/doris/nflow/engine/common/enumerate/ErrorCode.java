@@ -53,6 +53,8 @@ public enum ErrorCode {
     ROLLBACK_REJECTRD(3016, "Rollback rejected, non-running flowInstance to rollback"),
 
     GET_SCRIPT_CALCULATOR_IS_NULL(3017, "Get script calculator is null"),
+    GET_SCRIPT_PLUGIN_ID_IS_NULL(3018, "Get script plugin id is null"),
+    GET_SERVICE_ID_IS_NULL(3018, "Get service api id is null"),
 
     /**
      * 4000 ~ 4999 操作权限异常

@@ -1,5 +1,6 @@
 package com.doris.nflow.engine.executor;
 
+import com.doris.nflow.engine.common.constant.WebSocketMessageConstant;
 import com.doris.nflow.engine.common.context.ExecutorContext;
 import com.doris.nflow.engine.common.context.RuntimeContext;
 import com.doris.nflow.engine.common.enumerate.ErrorCode;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -77,6 +79,7 @@ public class FlowExecutor extends BaseNodeExecutor {
             if (!ErrorCode.isSuccess(e.getErrorCode())) {
                 processStatus = ProcessStatus.FAILED.getCode();
             }
+            sendWebSocketMessage(MessageFormat.format(WebSocketMessageConstant.ERROR_FLOW_MESSAGE, e.getErrorMsg()), runtimeContext.getWebSocketKey());
             throw e;
         } finally {
             runtimeContext.setProcessStatus(processStatus);
@@ -93,6 +96,10 @@ public class FlowExecutor extends BaseNodeExecutor {
 
         // 补全RuntimeContext 找到start节点
         fillExecuteContext(runtimeContext, flowInstance.getFlowInstanceCode(), instanceDataCode);
+
+        // 发送webSocket消息
+        sendWebSocketMessage(WebSocketMessageConstant.INFO_START_MESSAGE, runtimeContext.getWebSocketKey());
+
     }
 
     private FlowInstance saveFlowInstance(RuntimeContext runtimeContext) throws ProcessException {

@@ -48,6 +48,7 @@ public class EndEventExecutor extends RuntimeExecutor {
         currentNodeInstance.setInstanceDataCode(runtimeContext.getInstanceDataCode());
         currentNodeInstance.setStatus(NodeInstanceStatus.SUCCESS.getCode());
         runtimeContext.getNodeInstanceList().add(currentNodeInstance);
+        super.postExecute(runtimeContext);
     }
 
     @Override
